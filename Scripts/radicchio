@@ -14,6 +14,7 @@ class RadicchioCli
   DEFAULT_MANIFEST = "radicchio.json"
   ALLOWED_EXTENSIONS = %w[.html .css .js .json .txt .xml .svg .ico .png .jpg .jpeg .gif .webp .woff .woff2 .ttf .eot .webmanifest .mjs .wasm].freeze
   GZIP_THRESHOLD = 512 * 1024 # compress request bodies > 512 KB
+  BUN_INSTALL_URL = "https://bun.sh/install".freeze
 
   def initialize(argv)
     @argv = argv.dup
@@ -170,6 +171,7 @@ class RadicchioCli
     abort "build.command is required" if build_command.empty?
     abort "build.publish is required" if publish.empty?
 
+    ensure_build_tooling!(install_command, build_command)
     run_command(install_command) unless install_command.empty?
     run_command(build_command)
 
@@ -206,6 +208,74 @@ class RadicchioCli
     stdout, status = Open3.capture2e(command)
     print stdout
     abort "Command failed: #{command}" unless status.success?
+  end
+
+  def ensure_build_tooling!(*commands)
+    commands.each do |command|
+      next if command.to_s.empty?
+
+      ensure_bun_available! if command_references?(command, "bun")
+    end
+  end
+
+  def command_references?(command, executable)
+    Shellwords.split(command.to_s).include?(executable)
+  rescue ArgumentError
+    command.to_s.match?(/\b#{Regexp.escape(executable)}\b/)
+  end
+
+  # Bootstrap bun on demand so repo-owned builds do not depend on pre-baked runner images.
+  def ensure_bun_available!
+    install_root = bun_install_root
+    install_bin = File.join(install_root, "bin")
+    ENV["BUN_INSTALL"] = install_root
+    prepend_path!(install_bin)
+    return if executable_available?("bun")
+
+    downloader = bun_downloader
+    abort "bun is required but neither curl nor wget is available" if downloader.nil?
+
+    puts "==> installing bun"
+    stdout, status = Open3.capture2e(
+      { "BUN_INSTALL" => install_root, "PATH" => ENV["PATH"].to_s },
+      "bash",
+      "-lc",
+      "#{downloader} #{Shellwords.escape(BUN_INSTALL_URL)} | bash"
+    )
+    print stdout
+    abort "Command failed: install bun" unless status.success?
+    abort "bun install completed but bun is still unavailable" unless executable_available?("bun")
+  end
+
+  def bun_install_root
+    value = ENV["BUN_INSTALL"].to_s.strip
+    return value unless value.empty?
+
+    File.expand_path("~/.bun")
+  end
+
+  def bun_downloader
+    return "curl -fsSL" if executable_available?("curl")
+    return "wget -qO-" if executable_available?("wget")
+
+    nil
+  end
+
+  def prepend_path!(path)
+    parts = ENV["PATH"].to_s.split(File::PATH_SEPARATOR).reject(&:empty?)
+    return if parts.include?(path)
+
+    ENV["PATH"] = ([ path ] + parts).join(File::PATH_SEPARATOR)
+  end
+
+  def executable_available?(executable)
+    _stdout, status = Open3.capture2e(
+      { "PATH" => ENV["PATH"].to_s },
+      "bash",
+      "-lc",
+      "command -v #{Shellwords.escape(executable)} >/dev/null 2>&1"
+    )
+    status.success?
   end
 
   def encode(bytes)
