@@ -6,5 +6,6 @@
     "publish": ".output/public"
   },
   "hostname": "bittergit.com",
+  "site_id": 102,
   "site_name": "bittergit"
 }
