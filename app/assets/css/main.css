@@ -125,6 +125,10 @@ button {
   font-weight: 500;
 }
 
+.brand-accent {
+  color: var(--color-accent);
+}
+
 .section-index {
   font-family: var(--font-mono);
   font-size: 0.7rem;

@@ -149,7 +149,7 @@ onMounted(() => {
   <div id="top">
     <header class="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur">
       <div class="mx-auto grid max-w-6xl grid-cols-[1fr_auto] items-center gap-6 px-6 py-4 md:grid-cols-[1fr_auto_auto]">
-        <a href="#top" class="brand text-fg">BitterGit</a>
+        <a href="#top" class="brand text-fg">Bitter<span class="brand-accent">Git</span></a>
         <nav class="hidden items-center gap-6 text-sm text-muted md:flex">
           <a href="#why" class="hover:text-fg">Why</a>
           <a href="#how" class="hover:text-fg">How</a>
@@ -466,7 +466,7 @@ Signature: ed25519:<span class="cli-block__comment">…</span></pre>
         class="mx-auto grid max-w-6xl gap-6 px-6 py-10 md:grid-cols-[1fr_auto] md:items-center"
       >
         <div class="flex items-center gap-4">
-          <span class="brand text-muted-strong">BitterGit</span>
+          <span class="brand text-muted-strong">Bitter<span class="brand-accent">Git</span></span>
           <span class="hairline w-10"></span>
           <span class="font-mono text-xs text-muted">
             agent-native source control
