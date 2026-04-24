@@ -1,0 +1,567 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f5f2ec;
+  --color-panel: #fbf8f1;
+  --color-panel-strong: #e8e3d6;
+  --color-line: #d2cbba;
+  --color-line-strong: #a9a088;
+  --color-fg: #14181a;
+  --color-muted: #6a7070;
+  --color-muted-strong: #3c4042;
+  --color-accent: #1f7a4a;
+  --color-accent-dim: #155c38;
+  --color-positive: #1f7a4a;
+  --color-warn: #b35a34;
+
+  --font-sans: "Space Grotesk", "ui-sans-serif", "system-ui", "sans-serif";
+  --font-mono: "IBM Plex Mono", "ui-monospace", "Menlo", "monospace";
+
+  --tracking-brand: 0.24em;
+}
+
+:root {
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #0a0c0a;
+    --color-panel: #10130f;
+    --color-panel-strong: #161a15;
+    --color-line: #262b24;
+    --color-line-strong: #3a4135;
+    --color-fg: #e8f0e4;
+    --color-muted: #8a938a;
+    --color-muted-strong: #c2cabc;
+    --color-accent: #5ecf8f;
+    --color-accent-dim: #40b378;
+    --color-positive: #5ecf8f;
+    --color-warn: #df8b6f;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #0a0c0a;
+  --color-panel: #10130f;
+  --color-panel-strong: #161a15;
+  --color-line: #262b24;
+  --color-line-strong: #3a4135;
+  --color-fg: #e8f0e4;
+  --color-muted: #8a938a;
+  --color-muted-strong: #c2cabc;
+  --color-accent: #5ecf8f;
+  --color-accent-dim: #40b378;
+  --color-positive: #5ecf8f;
+  --color-warn: #df8b6f;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+html {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(31, 122, 74, 0.07), transparent 28%),
+    radial-gradient(circle at 88% 92%, rgba(31, 122, 74, 0.05), transparent 32%),
+    var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+:root[data-theme="dark"] html,
+html[data-theme="dark"] {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(94, 207, 143, 0.10), transparent 30%),
+    radial-gradient(circle at 88% 92%, rgba(94, 207, 143, 0.05), transparent 34%),
+    var(--color-bg);
+}
+
+body {
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+a,
+button {
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+button:hover,
+a:hover {
+  transform: translateY(-1px);
+}
+
+input,
+textarea,
+button {
+  border-radius: 0;
+}
+
+.hairline {
+  background: var(--color-line);
+  height: 1px;
+}
+
+.brand {
+  font-family: var(--font-mono);
+  letter-spacing: var(--tracking-brand);
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.section-index {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.gridlines {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--color-fg) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-fg) 6%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.85), transparent 78%);
+  -webkit-mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.85), transparent 78%);
+}
+
+.hero-orb {
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.hero-orb-a {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--color-accent) 32%, transparent) 0%, transparent 64%);
+}
+
+.hero-orb-b {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--color-warn) 18%, transparent) 0%, transparent 70%);
+}
+
+/* ================== Commit stream panel ==================
+   Fake `bitter git log --run` output. Shows the product's
+   core primitive — commits grouped and stamped by run. */
+
+.commit-stream {
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--color-line-strong) 75%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-panel) 94%, transparent),
+      color-mix(in srgb, var(--color-panel-strong) 92%, transparent)
+    );
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--color-muted-strong);
+  box-shadow: 0 10px 40px -24px color-mix(in srgb, var(--color-fg) 60%, transparent);
+}
+
+.commit-stream__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.9rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-line-strong) 55%, transparent);
+  background: color-mix(in srgb, var(--color-panel-strong) 90%, transparent);
+}
+
+.commit-stream__head-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.commit-stream__head-dots {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.commit-stream__head-dots span {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-line-strong) 70%, transparent);
+}
+
+.commit-stream__body {
+  padding: 0.85rem 0.95rem 0.5rem;
+}
+
+.commit-stream__prompt {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding-bottom: 0.9rem;
+  color: var(--color-muted);
+}
+
+.commit-stream__prompt-sigil {
+  color: var(--color-accent);
+}
+
+.commit-stream__prompt-cmd {
+  color: var(--color-fg);
+}
+
+.commit-stream__run {
+  position: relative;
+  padding: 0.55rem 0 0.55rem 1.35rem;
+}
+
+.commit-stream__run::before {
+  content: "";
+  position: absolute;
+  left: 0.42rem;
+  top: 1rem;
+  bottom: -0.2rem;
+  width: 1px;
+  background: color-mix(in srgb, var(--color-line-strong) 70%, transparent);
+}
+
+.commit-stream__run:last-child::before {
+  display: none;
+}
+
+.commit-stream__run-node {
+  position: absolute;
+  left: 0;
+  top: 0.55rem;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 9999px;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 22%, transparent);
+}
+
+.commit-stream__run-node--reverted {
+  background: var(--color-warn);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-warn) 22%, transparent);
+}
+
+.commit-stream__run-node--human {
+  background: transparent;
+  border: 1.5px solid color-mix(in srgb, var(--color-line-strong) 90%, transparent);
+  box-shadow: none;
+}
+
+.commit-stream__run-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  font-size: 0.8rem;
+  color: var(--color-fg);
+}
+
+.commit-stream__run-id {
+  font-weight: 500;
+  color: var(--color-accent);
+}
+
+.commit-stream__run-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.commit-stream__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  color: var(--color-accent);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.commit-stream__badge--warn {
+  border-color: color-mix(in srgb, var(--color-warn) 60%, transparent);
+  color: var(--color-warn);
+}
+
+.commit-stream__badge--muted {
+  border-color: color-mix(in srgb, var(--color-line-strong) 80%, transparent);
+  color: var(--color-muted);
+}
+
+.commit-stream__commits {
+  list-style: none;
+  padding: 0.25rem 0 0;
+  margin: 0;
+}
+
+.commit-stream__commits li {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  gap: 0.75rem;
+  padding: 0.2rem 0;
+  font-size: 0.72rem;
+  color: var(--color-muted-strong);
+}
+
+.commit-stream__commit-hash {
+  color: var(--color-muted);
+}
+
+.commit-stream__foot {
+  padding: 0.6rem 0.95rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-line-strong) 55%, transparent);
+  background: color-mix(in srgb, var(--color-panel-strong) 55%, transparent);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .commit-stream__run-node {
+    animation: commit-pulse 4.4s ease-in-out infinite;
+  }
+  .commit-stream__run:nth-child(2) .commit-stream__run-node {
+    animation-delay: 0.6s;
+  }
+  .commit-stream__run:nth-child(3) .commit-stream__run-node {
+    animation-delay: 1.2s;
+  }
+  .commit-stream__run:nth-child(4) .commit-stream__run-node {
+    animation-delay: 1.8s;
+  }
+}
+
+@keyframes commit-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-accent) 8%, transparent);
+  }
+}
+
+@media (max-width: 768px) {
+  .commit-stream {
+    font-size: 0.72rem;
+  }
+}
+
+/* ================== Inline glyphs ================== */
+
+.seal-stamp {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 50%, transparent);
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  color: var(--color-accent);
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--color-accent) 12%, transparent) 0%, transparent 70%);
+}
+
+.seal-stamp::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 1px dashed color-mix(in srgb, var(--color-accent) 28%, transparent);
+  border-radius: 9999px;
+}
+
+/* ================== Cards / surfaces ================== */
+
+.card-line {
+  position: relative;
+}
+
+.card-line::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1px;
+  width: 2.5rem;
+  background: var(--color-accent);
+}
+
+/* ================== Forms ================== */
+
+.field-input {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--color-line-strong) 80%, transparent);
+  color: var(--color-fg);
+  padding: 0.7rem 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.field-input::placeholder {
+  color: color-mix(in srgb, var(--color-muted) 90%, transparent);
+}
+
+.field-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 14%, transparent);
+}
+
+/* ================== CTA buttons ================== */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--color-accent);
+  color: #f7fbf4;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-accent);
+}
+
+.btn-primary:hover {
+  background: var(--color-accent-dim);
+  border-color: var(--color-accent-dim);
+  color: #f7fbf4;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted-strong);
+  border: 1px solid transparent;
+}
+
+.btn-ghost:hover {
+  color: var(--color-accent);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted-strong);
+  border: 1px solid color-mix(in srgb, var(--color-line-strong) 80%, transparent);
+}
+
+.btn-outline:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* ================== Spec rows ================== */
+
+.spec-row {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: 1.25rem;
+  padding: 0.95rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-line-strong) 60%, transparent);
+}
+
+.spec-row:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-line-strong) 60%, transparent);
+}
+
+.spec-row__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  align-self: start;
+  padding-top: 0.15rem;
+}
+
+.spec-row__body {
+  color: var(--color-muted-strong);
+  line-height: 1.7;
+  font-size: 0.96rem;
+}
+
+@media (max-width: 640px) {
+  .spec-row {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+}
+
+/* ================== Inline CLI block ================== */
+
+.cli-block {
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  line-height: 1.75;
+  color: var(--color-muted-strong);
+  border: 1px solid color-mix(in srgb, var(--color-line-strong) 75%, transparent);
+  background: color-mix(in srgb, var(--color-panel) 96%, transparent);
+  padding: 1.1rem 1.25rem;
+  overflow-x: auto;
+}
+
+.cli-block__prompt {
+  color: var(--color-accent);
+  margin-right: 0.5rem;
+}
+
+.cli-block__comment {
+  color: var(--color-muted);
+}

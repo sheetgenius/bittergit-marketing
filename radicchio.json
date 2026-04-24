@@ -1,0 +1,10 @@
+{
+  "api_base": "https://radicchio.bitter.sh",
+  "build": {
+    "install": "npm install --no-audit",
+    "command": "npm run generate",
+    "publish": ".output/public"
+  },
+  "hostname": "bittergit.com",
+  "site_name": "bittergit"
+}
