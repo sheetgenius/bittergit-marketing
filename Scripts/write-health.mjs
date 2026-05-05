@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 
 const gitSha = (() => {
   for (const key of ['EXPECTED_GIT_SHA', 'GIT_SHA', 'SOURCE_VERSION', 'COMMIT_SHA']) {
@@ -20,5 +20,6 @@ const payload = {
   git_sha: gitSha,
 }
 
-mkdirSync('public', { recursive: true })
-writeFileSync('public/up', `${JSON.stringify(payload)}\n`)
+rmSync('public/up', { force: true, recursive: true })
+mkdirSync('public/up', { recursive: true })
+writeFileSync('public/up/index.html', `${JSON.stringify(payload)}\n`)
