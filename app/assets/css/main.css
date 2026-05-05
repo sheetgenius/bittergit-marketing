@@ -106,6 +106,15 @@ a:hover {
   transform: translateY(-1px);
 }
 
+button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+button:disabled:hover {
+  transform: none;
+}
+
 input,
 textarea,
 button {
@@ -152,21 +161,6 @@ button {
   background-size: 64px 64px;
   mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.85), transparent 78%);
   -webkit-mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.85), transparent 78%);
-}
-
-.hero-orb {
-  pointer-events: none;
-  opacity: 0.85;
-}
-
-.hero-orb-a {
-  background:
-    radial-gradient(circle, color-mix(in srgb, var(--color-accent) 32%, transparent) 0%, transparent 64%);
-}
-
-.hero-orb-b {
-  background:
-    radial-gradient(circle, color-mix(in srgb, var(--color-warn) 18%, transparent) 0%, transparent 70%);
 }
 
 /* ================== Commit stream panel ==================
@@ -385,33 +379,62 @@ button {
   .commit-stream {
     font-size: 0.72rem;
   }
+
+  .commit-stream__foot {
+    flex-direction: column;
+  }
 }
 
-/* ================== Inline glyphs ================== */
+/* ================== Proof rail ================== */
 
-.seal-stamp {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  border: 1px solid color-mix(in srgb, var(--color-accent) 50%, transparent);
-  border-radius: 9999px;
+.proof-rail {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid color-mix(in srgb, var(--color-line-strong) 65%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-line-strong) 65%, transparent);
+}
+
+.proof-rail__item {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.9rem 1rem 0.95rem;
+  border-left: 1px solid color-mix(in srgb, var(--color-line-strong) 45%, transparent);
+}
+
+.proof-rail__item:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.proof-rail__item span {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.16em;
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   color: var(--color-accent);
-  background:
-    radial-gradient(circle, color-mix(in srgb, var(--color-accent) 12%, transparent) 0%, transparent 70%);
 }
 
-.seal-stamp::before {
-  content: "";
-  position: absolute;
-  inset: -6px;
-  border: 1px dashed color-mix(in srgb, var(--color-accent) 28%, transparent);
-  border-radius: 9999px;
+.proof-rail__item strong {
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--color-muted-strong);
+}
+
+@media (max-width: 760px) {
+  .proof-rail {
+    grid-template-columns: 1fr;
+  }
+
+  .proof-rail__item {
+    border-left: 0;
+    border-top: 1px solid color-mix(in srgb, var(--color-line-strong) 45%, transparent);
+    padding-left: 0;
+  }
+
+  .proof-rail__item:first-child {
+    border-top: 0;
+  }
 }
 
 /* ================== Cards / surfaces ================== */
@@ -428,6 +451,45 @@ button {
   height: 1px;
   width: 2.5rem;
   background: var(--color-accent);
+}
+
+/* ================== First run contract ================== */
+
+.receipt-panel,
+.try-step {
+  border: 1px solid color-mix(in srgb, var(--color-line-strong) 70%, transparent);
+  background: color-mix(in srgb, var(--color-panel) 92%, transparent);
+}
+
+.receipt-panel__key {
+  display: inline-block;
+  min-width: 6rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.try-step {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: 1.25rem;
+  padding: 1.25rem;
+}
+
+.try-step__index {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--color-accent);
+}
+
+@media (max-width: 640px) {
+  .try-step {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
 }
 
 /* ================== Forms ================== */
@@ -509,6 +571,16 @@ button {
 .btn-outline:hover {
   color: var(--color-accent);
   border-color: var(--color-accent);
+}
+
+.btn-outline.site-header__theme {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .btn-outline.site-header__theme {
+    display: inline-flex;
+  }
 }
 
 /* ================== Spec rows ================== */

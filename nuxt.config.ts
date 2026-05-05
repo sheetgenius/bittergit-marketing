@@ -26,13 +26,13 @@ export default defineNuxtConfig({
         {
           name: 'description',
           content:
-            'BitterGit is agent-native source control. Every commit carries its run, its wake, and its receipt — tied to the loop that produced it and the verification that cleared it. Gets it done.',
+            'BitterGit is agent-native git hosting for agent fleets. Commits keep native git semantics while carrying signed run provenance and BitterGrid verification receipts.',
         },
         { property: 'og:title', content: 'BitterGit — Agent-native source control' },
         {
           property: 'og:description',
           content:
-            'Every commit carries its run, its reason, and its receipt. The run is the review unit. Git works the way you already use it — provenance just shows up.',
+            'Native git goes in, signed run provenance comes out, and the verification receipt travels with the change.',
         },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://bittergit.com' },

@@ -2,7 +2,7 @@
 useSeoMeta({
   title: 'BitterGit — Agent-native source control',
   description:
-    'BitterGit is agent-native source control. Every commit carries its run, its wake, and its receipt — tied to the loop that produced it and the verification that cleared it. Gets it done.',
+    'BitterGit is agent-native git hosting for agent fleets. Commits keep native git semantics while carrying signed run provenance and BitterGrid verification receipts.',
 })
 
 const stream = [
@@ -50,6 +50,21 @@ const stream = [
   },
 ]
 
+const proofPoints = [
+  {
+    label: 'Native git',
+    value: 'Clone, branch, fetch, pull, blame, and log keep working from ordinary clients.',
+  },
+  {
+    label: 'Signed trailers',
+    value: 'Agent commits carry Run-Id and Wake-Id provenance stamped at commit time.',
+  },
+  {
+    label: 'Verified receipt',
+    value: 'Run review includes the build, test, probe, accept, and revert trail.',
+  },
+]
+
 const reasons = [
   {
     label: 'Run-linked by construction',
@@ -89,6 +104,27 @@ const flow = [
   },
 ]
 
+const trySteps = [
+  {
+    title: 'Wrap the repo you already have.',
+    command: 'bitter git clone git@bittergit.com:team/service.git',
+    body:
+      'BitterGit does not ask developers to learn a replacement VCS. The wrapper adds provenance around normal git operations.',
+  },
+  {
+    title: 'Let the run make the commit.',
+    command: 'bitter git commit -m "tighten deploy verifier"',
+    body:
+      'The Bitter CLI stamps the run trailers and signs the commit with the run-scoped key before it leaves the machine.',
+  },
+  {
+    title: 'Review the receipt, not the bot account.',
+    command: 'bitter git run show run_4f2a --receipts',
+    body:
+      'The review surface groups every touched repo by run and shows the BitterGrid verification that cleared or rejected it.',
+  },
+]
+
 const inside = [
   { label: 'Protocol', value: 'Standard git over HTTPS and SSH. Any client can clone, fetch, and pull.' },
   { label: 'Client', value: '`bitter git` — a thin wrapper over native git that stamps provenance at commit time.' },
@@ -121,36 +157,44 @@ const personas = [
   },
 ]
 
-onMounted(() => {
-  const button = document.getElementById('theme-toggle') as HTMLButtonElement | null
-  if (!button) return
-  const root = document.documentElement
-  const currentTheme = () =>
-    root.dataset.theme ||
-    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-  const applyLabel = () => {
-    button.textContent = currentTheme() === 'dark' ? 'Light mode' : 'Dark mode'
+const theme = ref<'light' | 'dark'>('light')
+const themeReady = ref(false)
+const themeLabel = computed(() => (theme.value === 'dark' ? 'Light mode' : 'Dark mode'))
+
+const currentTheme = () =>
+  document.documentElement.dataset.theme === 'dark' ||
+  (!document.documentElement.dataset.theme &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ? 'dark'
+    : 'light'
+
+const applyTheme = (next: 'light' | 'dark') => {
+  theme.value = next
+  document.documentElement.dataset.theme = next
+  try {
+    localStorage.setItem('bittergit-theme', next)
+  } catch (_) {
+    /* ignore */
   }
-  button.addEventListener('click', () => {
-    const next = currentTheme() === 'dark' ? 'light' : 'dark'
-    root.dataset.theme = next
-    try {
-      localStorage.setItem('bittergit-theme', next)
-    } catch (_) {
-      /* ignore */
-    }
-    applyLabel()
-  })
-  applyLabel()
+}
+
+const toggleTheme = () => {
+  applyTheme(theme.value === 'dark' ? 'light' : 'dark')
+}
+
+onMounted(() => {
+  theme.value = currentTheme()
+  themeReady.value = true
 })
 </script>
 
 <template>
   <div id="top">
     <header class="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur">
-      <div class="mx-auto grid max-w-6xl grid-cols-[1fr_auto] items-center gap-6 px-6 py-4 md:grid-cols-[1fr_auto_auto]">
+      <div class="mx-auto grid max-w-6xl grid-cols-[1fr_auto] items-center gap-3 px-4 py-4 md:grid-cols-[1fr_auto_auto] md:gap-6 md:px-6">
         <a href="#top" class="brand text-fg">Bitter<span class="brand-accent">Git</span></a>
         <nav class="hidden items-center gap-6 text-sm text-muted md:flex">
+          <a href="#try" class="hover:text-fg">Try</a>
           <a href="#why" class="hover:text-fg">Why</a>
           <a href="#how" class="hover:text-fg">How</a>
           <a href="#inside" class="hover:text-fg">Inside</a>
@@ -158,7 +202,15 @@ onMounted(() => {
           <a href="#access" class="hover:text-fg">Access</a>
         </nav>
         <div class="flex items-center gap-3">
-          <button id="theme-toggle" type="button" class="btn-outline">Theme</button>
+          <button
+            id="theme-toggle"
+            type="button"
+            class="btn-outline site-header__theme"
+            :disabled="!themeReady"
+            @click="toggleTheme"
+          >
+            {{ themeLabel }}
+          </button>
           <a href="#access" class="btn-primary">Request access</a>
         </div>
       </div>
@@ -166,8 +218,6 @@ onMounted(() => {
 
     <section class="relative overflow-hidden border-b border-line">
       <div class="absolute inset-0 gridlines opacity-50"></div>
-      <div class="absolute left-[-12%] top-[-14%] h-72 w-72 rounded-full hero-orb hero-orb-a blur-3xl"></div>
-      <div class="absolute bottom-[-14%] right-[-8%] h-80 w-80 rounded-full hero-orb hero-orb-b blur-3xl"></div>
 
       <div class="relative mx-auto grid max-w-6xl gap-16 px-6 py-24 md:grid-cols-[1.15fr_0.85fr] md:py-32">
         <div>
@@ -181,24 +231,25 @@ onMounted(() => {
             Gets it done.
           </p>
           <p class="mt-8 max-w-2xl text-lg leading-relaxed text-muted-strong md:text-xl">
-            BitterGit turns every agent commit into a verified change.
-            Each commit carries its run, its wake, and its receipt &mdash;
-            tied to the loop that produced it and the verification that cleared it.
+            BitterGit is git hosting for agent fleets. It keeps the protocol developers
+            already trust, then stamps every agent commit with the run that made it,
+            the wake that asked for it, and the verification that cleared it.
           </p>
           <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">
-            Git works the way you already use it. The provenance just shows up.
+            Open the run, not a bot account. Accept or revert the whole blast radius
+            with the receipts attached.
           </p>
 
           <div class="mt-10 flex flex-wrap items-center gap-3">
             <a href="#access" class="btn-primary">Request early access</a>
-            <a href="#how" class="btn-ghost">See the design &rarr;</a>
+            <a href="#try" class="btn-ghost">See first run &rarr;</a>
           </div>
 
-          <div class="mt-10 flex items-center gap-3">
-            <span class="seal-stamp">RUN</span>
-            <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
-              Every change has a run, a reason, and a receipt.
-            </span>
+          <div class="proof-rail mt-10">
+            <div v-for="point in proofPoints" :key="point.label" class="proof-rail__item">
+              <span>{{ point.label }}</span>
+              <strong>{{ point.value }}</strong>
+            </div>
           </div>
         </div>
 
@@ -268,9 +319,48 @@ onMounted(() => {
       </div>
     </section>
 
+    <section id="try" class="border-b border-line">
+      <div class="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-[0.9fr_1.1fr] md:gap-16">
+        <div>
+          <p class="section-index">01 / First run contract</p>
+          <h2 class="mt-4 max-w-3xl text-3xl font-semibold leading-tight tracking-tight md:text-5xl">
+            Try the primitive before you ask for the account.
+          </h2>
+          <p class="mt-6 text-lg leading-relaxed text-muted-strong">
+            A developer should understand BitterGit from one run: native git goes in,
+            signed provenance comes out, and the verification receipt travels with the change.
+          </p>
+
+          <div class="receipt-panel mt-8">
+            <div class="flex items-center justify-between gap-4 border-b border-line px-4 py-3">
+              <span class="font-mono text-xs uppercase tracking-[0.18em] text-muted">Expected receipt</span>
+              <span class="commit-stream__badge">&#10003; verified</span>
+            </div>
+            <ul class="space-y-3 px-4 py-4 text-sm leading-relaxed text-muted-strong">
+              <li><span class="receipt-panel__key">Run-Id</span> is present and signed.</li>
+              <li><span class="receipt-panel__key">Wake-Id</span> links the change to the request.</li>
+              <li><span class="receipt-panel__key">Verified-By</span> points to the BitterGrid build.</li>
+              <li><span class="receipt-panel__key">Decision</span> records accept, revert, or supersede.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="grid gap-4">
+          <article v-for="(step, idx) in trySteps" :key="step.title" class="try-step">
+            <div class="try-step__index">{{ String(idx + 1).padStart(2, '0') }}</div>
+            <div>
+              <h3 class="text-xl font-semibold leading-tight">{{ step.title }}</h3>
+              <pre class="cli-block mt-4"><span><span class="cli-block__prompt">$</span>{{ step.command }}</span></pre>
+              <p class="mt-4 leading-relaxed text-muted-strong">{{ step.body }}</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <section id="why">
       <div class="mx-auto max-w-6xl px-6 py-24">
-        <p class="section-index">01 / Why BitterGit exists</p>
+        <p class="section-index">02 / Why BitterGit exists</p>
         <h2
           class="mt-4 max-w-4xl text-3xl font-semibold leading-tight tracking-tight md:text-5xl"
         >
@@ -299,7 +389,7 @@ onMounted(() => {
 
     <section id="how" class="border-t border-line">
       <div class="mx-auto max-w-6xl px-6 py-24">
-        <p class="section-index">02 / How it works</p>
+        <p class="section-index">03 / How it works</p>
         <h2
           class="mt-4 max-w-4xl text-3xl font-semibold leading-tight tracking-tight md:text-5xl"
         >
@@ -346,7 +436,7 @@ Signature: ed25519:<span class="cli-block__comment">…</span></pre>
 
     <section id="inside" class="border-t border-line">
       <div class="mx-auto max-w-6xl px-6 py-24">
-        <p class="section-index">03 / What's inside</p>
+        <p class="section-index">04 / What's inside</p>
         <h2
           class="mt-4 max-w-4xl text-3xl font-semibold leading-tight tracking-tight md:text-5xl"
         >
@@ -376,7 +466,7 @@ Signature: ed25519:<span class="cli-block__comment">…</span></pre>
 
     <section id="who" class="border-t border-line">
       <div class="mx-auto max-w-6xl px-6 py-24">
-        <p class="section-index">04 / Who it's for</p>
+        <p class="section-index">05 / Who it's for</p>
         <h2
           class="mt-4 max-w-4xl text-3xl font-semibold leading-tight tracking-tight md:text-5xl"
         >
@@ -406,7 +496,7 @@ Signature: ed25519:<span class="cli-block__comment">…</span></pre>
 
     <section id="access" class="border-y border-line">
       <div class="mx-auto max-w-6xl px-6 py-24">
-        <p class="section-index">05 / Access</p>
+        <p class="section-index">06 / Access</p>
         <h2
           class="mt-4 max-w-4xl text-3xl font-semibold leading-tight tracking-tight md:text-5xl"
         >
@@ -476,6 +566,7 @@ Signature: ed25519:<span class="cli-block__comment">…</span></pre>
           class="flex flex-wrap gap-6 font-mono text-xs uppercase tracking-[0.18em] text-muted"
         >
           <a href="#top" class="transition hover:text-fg">Top</a>
+          <a href="#try" class="transition hover:text-fg">Try</a>
           <a href="#how" class="transition hover:text-fg">Design</a>
           <a href="#inside" class="transition hover:text-fg">Spec</a>
           <a href="#access" class="transition hover:text-fg">Request access</a>
