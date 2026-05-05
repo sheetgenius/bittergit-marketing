@@ -4,6 +4,7 @@ node_modules
 .data
 .cache
 dist
+test-results/
 .DS_Store
 *.log
 .env
@@ -11,3 +12,4 @@ dist
 !.env.example
 .vercel
 .netlify
+public/up

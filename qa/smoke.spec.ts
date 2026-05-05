@@ -23,6 +23,19 @@ test('homepage exposes meta description and og tags', async ({ page }) => {
   await expect(ogDescription).toHaveAttribute('content', /verification receipt/i)
 })
 
+test('health endpoint reports the deploy receipt shape', async ({ request }) => {
+  const response = await request.get('/up')
+  expect(response.ok()).toBe(true)
+
+  const payload = await response.json()
+  expect(payload).toMatchObject({
+    ok: true,
+    service: 'bittergit.com',
+    app: 'BitterGit',
+  })
+  expect(payload.git_sha).toMatch(/^([0-9a-f]{40}|unknown)$/)
+})
+
 test('homepage hero heading is visible', async ({ page }) => {
   await page.goto('/')
   const hero = page.locator('h1').first()
