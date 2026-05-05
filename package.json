@@ -4,11 +4,8 @@
   "private": true,
   "description": "Marketing site for bittergit.com",
   "scripts": {
-    "prebuild": "node ./Scripts/write-health.mjs",
     "build": "nuxt build",
-    "predev": "node ./Scripts/write-health.mjs",
     "dev": "nuxt dev",
-    "pregenerate": "node ./Scripts/write-health.mjs",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",

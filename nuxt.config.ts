@@ -12,6 +12,10 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'static',
+    prerender: {
+      autoSubfolderIndex: false,
+      routes: ['/up'],
+    },
   },
 
   app: {

@@ -1,7 +1,6 @@
 import { execFileSync } from 'node:child_process'
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 
-const gitSha = (() => {
+const gitSha = () => {
   for (const key of ['EXPECTED_GIT_SHA', 'GIT_SHA', 'SOURCE_VERSION', 'COMMIT_SHA']) {
     if (process.env[key]) return process.env[key]
   }
@@ -11,15 +10,11 @@ const gitSha = (() => {
   } catch (_) {
     return 'unknown'
   }
-})()
+}
 
-const payload = {
+export default defineEventHandler(() => ({
   ok: true,
   service: 'bittergit.com',
   app: 'BitterGit',
-  git_sha: gitSha,
-}
-
-rmSync('public/up', { force: true, recursive: true })
-mkdirSync('public/up', { recursive: true })
-writeFileSync('public/up/index.html', `${JSON.stringify(payload)}\n`)
+  git_sha: gitSha(),
+}))
