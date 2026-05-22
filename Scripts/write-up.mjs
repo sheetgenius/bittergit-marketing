@@ -14,7 +14,7 @@ const gitSha =
 
 mkdirSync(resolve(root, 'public'), { recursive: true })
 writeFileSync(
-  resolve(root, 'public/up'),
+  resolve(root, 'public/up.html'),
   JSON.stringify({ ok: true, status: 'ok', service, git_sha: gitSha }) + '\n',
 )
 
