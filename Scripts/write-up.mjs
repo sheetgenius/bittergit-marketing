@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const service = 'bittergit'
+const service = 'bittergit.com'
 const gitSha =
   process.env.BITTERGRID_RELEASE_SHA ||
   process.env.VERSION ||
@@ -15,7 +15,14 @@ const gitSha =
 mkdirSync(resolve(root, 'public'), { recursive: true })
 writeFileSync(
   resolve(root, 'public/up.html'),
-  JSON.stringify({ ok: true, status: 'ok', service, git_sha: gitSha }) + '\n',
+  JSON.stringify({
+    ok: true,
+    status: 'ok',
+    service,
+    app: 'BitterGit',
+    git_sha: gitSha,
+    secret_material_returned: false,
+  }) + '\n',
 )
 
 function currentGitSha() {

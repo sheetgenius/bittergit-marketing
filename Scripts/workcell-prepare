@@ -1,0 +1,186 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ARTIFACT_DIR="${WORKCELL_ARTIFACTS_DIR:-test-results/workcell/run-local}"
+CONTRACT_REPORT="${ARTIFACT_DIR}/prepare.contract.json"
+INSTALL_LOG="${ARTIFACT_DIR}/prepare.install.log"
+AUDIT_LOG="${ARTIFACT_DIR}/prepare.audit.log"
+GENERATE_LOG="${ARTIFACT_DIR}/prepare.generate.log"
+SMOKE_LOG="${ARTIFACT_DIR}/prepare.smoke.log"
+PLAYWRIGHT_OUTPUT_DIR="${ARTIFACT_DIR}/playwright-output"
+
+mkdir -p "$ARTIFACT_DIR"
+
+write_failure() {
+  local step="$1"
+  cat >"${ARTIFACT_DIR}/prepare.json" <<JSON
+{
+  "schema_version": "bittergit.workcell_prepare.v1",
+  "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "environment_shape": "radicchio_nuxt_marketing_preflight",
+  "failed_step": "${step}",
+  "result": "failed"
+}
+JSON
+}
+
+run_step() {
+  local name="$1"
+  local log_path="$2"
+  shift 2
+
+  {
+    printf '$'
+    printf ' %q' "$@"
+    printf '\n\n'
+    "$@"
+  } >"$log_path" 2>&1 || {
+    write_failure "$name"
+    echo "workcell-prepare failed: ${name}" >&2
+    exit 1
+  }
+}
+
+python3 - "$CONTRACT_REPORT" <<'PY'
+import json
+import pathlib
+import sys
+import time
+
+artifact_path = pathlib.Path(sys.argv[1])
+required = [
+    "package.json",
+    "package-lock.json",
+    "radicchio.json",
+    "nuxt.config.ts",
+    "playwright.config.ts",
+    "qa/smoke.spec.ts",
+    "Scripts/deploy",
+    "Scripts/postdeploy-verify",
+    "Scripts/radicchio",
+    "Scripts/write-up.mjs",
+    "server/routes/up.ts",
+    "app/pages/index.vue",
+    "public/favicon.svg",
+]
+
+missing = [path for path in required if not pathlib.Path(path).is_file()]
+package = json.loads(pathlib.Path("package.json").read_text(encoding="utf-8"))
+lock = json.loads(pathlib.Path("package-lock.json").read_text(encoding="utf-8"))
+manifest = json.loads(pathlib.Path("radicchio.json").read_text(encoding="utf-8"))
+playwright = pathlib.Path("playwright.config.ts").read_text(encoding="utf-8", errors="replace")
+smoke = pathlib.Path("qa/smoke.spec.ts").read_text(encoding="utf-8", errors="replace")
+write_up = pathlib.Path("Scripts/write-up.mjs").read_text(encoding="utf-8", errors="replace")
+server_up = pathlib.Path("server/routes/up.ts").read_text(encoding="utf-8", errors="replace")
+postdeploy = pathlib.Path("Scripts/postdeploy-verify").read_text(encoding="utf-8", errors="replace")
+landing = pathlib.Path("app/pages/index.vue").read_text(encoding="utf-8", errors="replace")
+scripts = package.get("scripts", {})
+root_package = lock.get("packages", {}).get("", {})
+lock_versions = {
+    name: lock.get("packages", {}).get(f"node_modules/{name}", {}).get("version")
+    for name in ["nuxt", "nitropack", "vite", "devalue", "simple-git", "ws", "postcss", "defu", "unhead"]
+}
+
+checks = [
+    {
+        "name": "required_files",
+        "result": "failed" if missing else "ok",
+        "missing": missing,
+    },
+    {
+        "name": "package_scripts",
+        "result": "ok" if scripts.get("generate") == "nuxt generate" and scripts.get("prebuild") == "node Scripts/write-up.mjs" and scripts.get("pregenerate") == "node Scripts/write-up.mjs" and scripts.get("qa:smoke") == "playwright test --config playwright.config.ts" else "failed",
+        "scripts": {"generate": scripts.get("generate"), "prebuild": scripts.get("prebuild"), "pregenerate": scripts.get("pregenerate"), "qa:smoke": scripts.get("qa:smoke")},
+    },
+    {
+        "name": "lockfile_versions",
+        "result": "ok" if lock_versions.get("nuxt") == "4.4.6" and lock_versions.get("nitropack") == "2.13.4" and lock_versions.get("vite") == "7.3.3" and lock_versions.get("devalue") == "5.8.1" and lock_versions.get("simple-git") == "3.36.0" and lock_versions.get("ws") == "8.21.0" and lock_versions.get("postcss") == "8.5.14" and lock_versions.get("defu") == "6.1.7" and lock_versions.get("unhead") == "2.1.15" else "failed",
+        "versions": lock_versions,
+    },
+    {
+        "name": "lockfile_root",
+        "result": "ok" if root_package.get("name") == "bittergit-marketing" and root_package.get("dependencies", {}).get("nuxt") == "^4.4.2" else "failed",
+    },
+    {
+        "name": "radicchio_manifest",
+        "result": "ok" if manifest.get("hostname") == "bittergit.com" and manifest.get("site_name") == "bittergit" and manifest.get("build", {}).get("install") == "npm ci --no-audit" and manifest.get("build", {}).get("command") == "npm run generate" and manifest.get("build", {}).get("publish") == ".output/public" else "failed",
+        "hostname": manifest.get("hostname"),
+        "site_name": manifest.get("site_name"),
+    },
+    {
+        "name": "playwright_static_server",
+        "result": "ok" if "PLAYWRIGHT_BASE_URL" in playwright and "python3 -m http.server 4173 --directory .output/public" in playwright and "npm run dev" not in playwright else "failed",
+    },
+    {
+        "name": "health_probe",
+        "result": "ok" if "service = 'bittergit.com'" in write_up and "app: 'BitterGit'" in write_up and "secret_material_returned: false" in write_up and "service: 'bittergit.com'" in server_up and "secret_material_returned: false" in server_up else "failed",
+    },
+    {
+        "name": "postdeploy_contract",
+        "result": "ok" if "EXPECTED_GIT_SHA" in postdeploy and "/up" in postdeploy and "SMOKE_PATHS" in postdeploy else "failed",
+    },
+    {
+        "name": "public_smoke_scope",
+        "result": "ok" if "agent-native git hosting" in smoke and "BitterGit" in smoke and "Request access" in smoke and "bittergit.com" in smoke else "failed",
+    },
+    {
+        "name": "landing_contract",
+        "result": "ok" if "Agent-native source control." in landing and "BitterGit is git hosting for agent fleets" in landing and 'action="/__submit"' in landing and 'value="bittergit-early-access"' in landing else "failed",
+    },
+]
+failures = [check["name"] for check in checks if check["result"] != "ok"]
+payload = {
+    "schema_version": "bittergit.workcell_prepare_contract.v1",
+    "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    "checks": checks,
+    "result": "failed" if failures else "ok",
+    "failures": failures,
+}
+artifact_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+if failures:
+    raise SystemExit(1)
+PY
+
+run_step "clean_install" "$INSTALL_LOG" npm ci
+run_step "production_dependency_audit" "$AUDIT_LOG" npm audit --omit=dev
+run_step "static_generate" "$GENERATE_LOG" npm run generate
+run_step "local_browser_smoke" "$SMOKE_LOG" npm run qa:smoke -- --output="$PLAYWRIGHT_OUTPUT_DIR"
+
+git_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+
+cat >"${ARTIFACT_DIR}/prepare.json" <<JSON
+{
+  "schema_version": "bittergit.workcell_prepare.v1",
+  "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "environment_shape": "radicchio_nuxt_marketing_preflight",
+  "git_sha": "${git_sha}",
+  "contract_report": "${CONTRACT_REPORT}",
+  "logs": {
+    "install": "${INSTALL_LOG}",
+    "audit": "${AUDIT_LOG}",
+    "generate": "${GENERATE_LOG}",
+    "smoke": "${SMOKE_LOG}"
+  },
+  "runtime_health_path": "/up",
+  "limitations": [
+    "This prepare path validates the generated Radicchio site, release identity artifact, public landing smoke, and production dependency audit.",
+    "Radicchio form delivery status is not checked because this repo's postdeploy verifier currently verifies public paths and release identity only."
+  ],
+  "result": "ok"
+}
+JSON
+
+cat >"${ARTIFACT_DIR}/PREPARE.md" <<MARKDOWN
+# BitterGit Workcell Prepare
+
+- Result: ok
+- Shape: Radicchio Nuxt marketing preflight
+- Git SHA: ${git_sha}
+- Contract report: ${CONTRACT_REPORT}
+- Install log: ${INSTALL_LOG}
+- Audit log: ${AUDIT_LOG}
+- Generate log: ${GENERATE_LOG}
+- Smoke log: ${SMOKE_LOG}
+MARKDOWN
+
+echo "workcell-prepare ok runtime_health_path=/up"

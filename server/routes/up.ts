@@ -11,4 +11,5 @@ export default defineEventHandler(() => ({
   service: 'bittergit.com',
   app: 'BitterGit',
   git_sha: gitSha(),
+  secret_material_returned: false,
 }))

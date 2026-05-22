@@ -11,7 +11,7 @@ export default defineConfig({
   webServer: configuredBaseURL
     ? undefined
     : {
-        command: 'npm run dev -- --host 127.0.0.1 --port 4173',
+        command: 'sh -lc "npm run generate && python3 -m http.server 4173 --directory .output/public"',
         url: localBaseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,

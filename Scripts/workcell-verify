@@ -1,0 +1,224 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ARTIFACT_DIR="${WORKCELL_ARTIFACTS_DIR:-test-results/workcell/run-local}"
+BASE_URL="${VERIFY_BASE_URL:-https://bittergit.com}"
+BASE_URL="${BASE_URL%/}"
+EXPECTED_RELEASE_SHA="${VERIFY_EXPECTED_RELEASE_SHA:-${EXPECTED_GIT_SHA:-}}"
+HTTP_REPORT="${ARTIFACT_DIR}/verify-http.json"
+SMOKE_JSON="${ARTIFACT_DIR}/smoke-screen.json"
+SMOKE_MD="${ARTIFACT_DIR}/SMOKE_SCREEN.md"
+POSTDEPLOY_LOG="${ARTIFACT_DIR}/postdeploy-verify.log"
+QA_SMOKE_LOG="${ARTIFACT_DIR}/qa-smoke.log"
+PLAYWRIGHT_OUTPUT_DIR="${ARTIFACT_DIR}/playwright-output"
+
+mkdir -p "$ARTIFACT_DIR"
+
+write_failure() {
+  local step="$1"
+  cat >"${ARTIFACT_DIR}/verify.json" <<JSON
+{
+  "schema_version": "bittergit.workcell_verify.v1",
+  "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "base_url": "${BASE_URL}",
+  "expected_release_sha": "${EXPECTED_RELEASE_SHA}",
+  "failed_step": "${step}",
+  "result": "failed"
+}
+JSON
+}
+
+run_step() {
+  local name="$1"
+  local log_path="$2"
+  shift 2
+
+  {
+    printf '$'
+    printf ' %q' "$@"
+    printf '\n\n'
+    "$@"
+  } >"$log_path" 2>&1 || {
+    write_failure "$name"
+    echo "workcell-verify failed: ${name}" >&2
+    exit 1
+  }
+}
+
+if [ -n "$EXPECTED_RELEASE_SHA" ]; then
+  run_step "postdeploy_verify" "$POSTDEPLOY_LOG" env VERIFY_BASE_URL="$BASE_URL" EXPECTED_GIT_SHA="$EXPECTED_RELEASE_SHA" Scripts/postdeploy-verify
+else
+  run_step "postdeploy_verify" "$POSTDEPLOY_LOG" env VERIFY_BASE_URL="$BASE_URL" Scripts/postdeploy-verify
+fi
+
+run_step "public_browser_smoke" "$QA_SMOKE_LOG" env PLAYWRIGHT_BASE_URL="$BASE_URL" npm run qa:smoke -- --output="$PLAYWRIGHT_OUTPUT_DIR"
+
+python3 - "$BASE_URL" "$ARTIFACT_DIR" "$HTTP_REPORT" "$SMOKE_JSON" "$SMOKE_MD" "$EXPECTED_RELEASE_SHA" "$QA_SMOKE_LOG" <<'PY'
+import json
+import pathlib
+import sys
+import time
+import urllib.error
+import urllib.request
+
+base_url, artifact_dir, http_report, smoke_json, smoke_md, expected_release_sha, qa_smoke_log = sys.argv[1:8]
+artifact_root = pathlib.Path(artifact_dir)
+checks = []
+failures = []
+responses = {}
+
+
+def record(name, ok, **extra):
+    checks.append({"name": name, "result": "ok" if ok else "failed", **extra})
+    if not ok:
+        failures.append(name)
+
+
+def fetch(key, path):
+    url = f"{base_url}{path}"
+    body_path = artifact_root / f"verify.{key}.body"
+    try:
+        request = urllib.request.Request(url, headers={"User-Agent": "BitterGitWorkcellVerify/1.0"})
+        with urllib.request.urlopen(request, timeout=12) as response:
+            status = response.status
+            body = response.read()
+            content_type = response.headers.get("Content-Type", "")
+            final_url = response.geturl()
+    except urllib.error.HTTPError as exc:
+        status = exc.code
+        body = exc.read()
+        content_type = exc.headers.get("Content-Type", "") if exc.headers else ""
+        final_url = exc.geturl()
+    except Exception as exc:
+        status = 0
+        body = f"{type(exc).__name__}: {exc}".encode()
+        content_type = ""
+        final_url = url
+
+    body_path.write_bytes(body)
+    responses[key] = {
+        "path": path,
+        "url": url,
+        "status": status,
+        "bytes": len(body),
+        "content_type": content_type,
+        "final_url": final_url,
+        "artifact_ref": str(body_path),
+    }
+    return status, body.decode("utf-8", errors="replace"), body_path
+
+
+root_status, root, root_path = fetch("root", "/")
+up_status, up_text, up_path = fetch("up", "/up")
+
+record("root:status", root_status == 200, status=root_status, artifact_ref=str(root_path))
+record("root:headline", "Agent-native source control." in root and "BitterGit is git hosting for agent fleets" in root, artifact_ref=str(root_path))
+record("root:access_form", 'action="/__submit"' in root and 'value="bittergit-early-access"' in root and "Request access" in root, artifact_ref=str(root_path))
+record("root:receipt_copy", "Verified-By" in root and "Run-Id" in root and "Wake-Id" in root, artifact_ref=str(root_path))
+
+try:
+    up_payload = json.loads(up_text)
+except json.JSONDecodeError:
+    up_payload = {}
+record("up:ok", up_status == 200 and up_payload.get("ok") is True, status=up_status, artifact_ref=str(up_path))
+record("up:service", up_payload.get("service") == "bittergit.com", service=up_payload.get("service"), artifact_ref=str(up_path))
+record("up:app", up_payload.get("app") == "BitterGit", app=up_payload.get("app"), artifact_ref=str(up_path))
+record("up:no_secret_material", up_payload.get("secret_material_returned") is False, artifact_ref=str(up_path))
+record("up:release_identity", bool(up_payload.get("git_sha")), git_sha=up_payload.get("git_sha"), artifact_ref=str(up_path))
+if expected_release_sha:
+    record("up:expected_release", up_payload.get("git_sha") == expected_release_sha, expected=expected_release_sha, observed=up_payload.get("git_sha"), artifact_ref=str(up_path))
+
+qa_log = pathlib.Path(qa_smoke_log).read_text(encoding="utf-8", errors="replace")
+record("qa_smoke:passed", "passed" in qa_log and "qa/smoke.spec.ts" in qa_log and "failed" not in qa_log.lower(), artifact_ref=qa_smoke_log)
+
+report = {
+    "schema_version": "bittergit.workcell_verify_http.v1",
+    "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    "base_url": base_url,
+    "expected_release_sha": expected_release_sha,
+    "responses": responses,
+    "checks": checks,
+    "result": "failed" if failures else "ok",
+    "failures": failures,
+}
+pathlib.Path(http_report).write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+
+entries = [
+    {
+        "key": "marketing.front_door",
+        "actor": "signed_out_engineer",
+        "entrypoint": "/",
+        "summary": "BitterGit public page presents the agent-native source control offer, run receipt language, and access form.",
+        "proves": ["root_http_200", "headline", "receipt_copy", "access_form", "browser_smoke"],
+        "artifact_refs": [str(root_path), qa_smoke_log, http_report],
+        "result": "failed" if any(name.startswith(("root:", "qa_smoke:")) for name in failures) else "ok",
+    },
+    {
+        "key": "runtime.release_identity",
+        "actor": "operator",
+        "entrypoint": "/up",
+        "summary": "Static Radicchio release identity reports service, app, git SHA, and no secret material.",
+        "proves": ["health_ok", "service_identity", "app_identity", "release_identity", "no_secret_material"],
+        "artifact_refs": [str(up_path), http_report],
+        "result": "failed" if any(name.startswith("up:") for name in failures) else "ok",
+    },
+]
+smoke = {
+    "schema_version": "bittergit.smoke_screen.v1",
+    "generated_at": report["generated_at"],
+    "base_url": base_url,
+    "expected_release_sha": expected_release_sha,
+    "entries": entries,
+    "limitations": [
+        "This verification covers public page, browser smoke, access form shape, and release identity.",
+        "It does not submit the Radicchio intake form."
+    ],
+    "result": report["result"],
+    "failures": failures,
+}
+pathlib.Path(smoke_json).write_text(json.dumps(smoke, indent=2) + "\n", encoding="utf-8")
+
+lines = [
+    "# BitterGit Smoke Screen",
+    "",
+    f"- Generated: {smoke['generated_at']}",
+    f"- Base URL: {base_url}",
+    f"- Expected release SHA: {expected_release_sha or '(not asserted)'}",
+    f"- Result: {smoke['result']}",
+    "",
+]
+for entry in entries:
+    lines.extend([
+        f"## {entry['key']}",
+        f"- Actor: {entry['actor']}",
+        f"- Entrypoint: {entry['entrypoint']}",
+        f"- Summary: {entry['summary']}",
+        f"- Proves: {', '.join(entry['proves'])}",
+        f"- Result: {entry['result']}",
+        f"- Artifacts: {', '.join(entry['artifact_refs'])}",
+        "",
+    ])
+pathlib.Path(smoke_md).write_text("\n".join(lines), encoding="utf-8")
+
+if failures:
+    raise SystemExit(1)
+PY
+
+cat >"${ARTIFACT_DIR}/verify.json" <<JSON
+{
+  "schema_version": "bittergit.workcell_verify.v1",
+  "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "base_url": "${BASE_URL}",
+  "expected_release_sha": "${EXPECTED_RELEASE_SHA}",
+  "http_report": "${HTTP_REPORT}",
+  "smoke_screen": "${SMOKE_JSON}",
+  "smoke_screen_markdown": "${SMOKE_MD}",
+  "logs": {
+    "postdeploy": "${POSTDEPLOY_LOG}",
+    "qa_smoke": "${QA_SMOKE_LOG}"
+  },
+  "result": "ok"
+}
+JSON
+
+echo "workcell-verify ok base_url=${BASE_URL}"

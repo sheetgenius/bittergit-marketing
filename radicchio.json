@@ -1,7 +1,7 @@
 {
   "api_base": "https://radicchio.bitter.sh",
   "build": {
-    "install": "npm install --no-audit",
+    "install": "npm ci --no-audit",
     "command": "npm run generate",
     "publish": ".output/public"
   },
