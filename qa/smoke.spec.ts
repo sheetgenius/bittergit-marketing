@@ -30,10 +30,14 @@ test('health endpoint reports the deploy receipt shape', async ({ request }) => 
   const payload = await response.json()
   expect(payload).toMatchObject({
     ok: true,
+    status: 'ok',
     service: 'bittergit.com',
+    hostname: 'bittergit.com',
     app: 'BitterGit',
+    secret_material_returned: false,
   })
   expect(payload.git_sha).toMatch(/^([0-9a-f]{40}|unknown)$/)
+  expect(payload.release).toBe(payload.git_sha)
 })
 
 test('homepage hero heading is visible', async ({ page }) => {

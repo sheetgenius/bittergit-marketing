@@ -9,6 +9,72 @@ test -n "${VERIFY_BASE_URL:-}" || {
 TIMEOUT_SECONDS="${VERIFY_TIMEOUT_SECONDS:-900}"
 POLL_SECONDS="${VERIFY_POLL_SECONDS:-5}"
 SMOKE_PATHS="${VERIFY_SMOKE_PATHS:-/}"
+EXPECTED_CSP="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests"
+EXPECTED_PERMISSIONS_POLICY="camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=(), browsing-topics=()"
+
+header_value() {
+  local name="$1"
+  python3 -c 'import sys
+target = sys.argv[1].lower()
+for line in sys.stdin:
+    if ":" not in line:
+        continue
+    name, value = line.split(":", 1)
+    if name.strip().lower() == target:
+        print(value.strip(), end="")
+        break
+' "$name"
+}
+
+assert_header() {
+  local path="$1"
+  local header="$2"
+  local expected="$3"
+  local url="${VERIFY_BASE_URL%/}${path}"
+  local headers
+  local observed
+
+  headers="$(curl -fsSL -o /dev/null -D - "$url" | tr -d '\r')"
+  observed="$(printf '%s' "$headers" | header_value "$header")"
+
+  if [ "$observed" != "$expected" ]; then
+    echo "Unexpected ${header} at ${url}" >&2
+    echo "Expected: ${expected}" >&2
+    echo "Observed: ${observed:-<missing>}" >&2
+    return 1
+  fi
+}
+
+validate_health_body() {
+  local health_url="${VERIFY_BASE_URL%/}/up"
+  local expected_sha="${EXPECTED_GIT_SHA:-}"
+
+  curl -fsS "$health_url" | python3 -c 'import json
+import sys
+
+expected_sha = sys.argv[1]
+try:
+    payload = json.load(sys.stdin)
+except Exception:
+    raise SystemExit("health response is not JSON")
+
+checks = {
+    "ok": payload.get("ok") is True,
+    "status": payload.get("status") == "ok",
+    "service": payload.get("service") == "bittergit.com",
+    "hostname": payload.get("hostname") == "bittergit.com",
+    "app": payload.get("app") == "BitterGit",
+    "release_identity": bool(payload.get("git_sha")) and payload.get("release") == payload.get("git_sha"),
+    "secret_material_returned": payload.get("secret_material_returned") is False,
+}
+if expected_sha:
+    checks["expected_release"] = payload.get("git_sha") == expected_sha
+
+failures = [name for name, ok in checks.items() if not ok]
+if failures:
+    raise SystemExit("/up failed release identity checks: " + ", ".join(failures))
+' "$expected_sha"
+}
 
 if [ -n "${EXPECTED_GIT_SHA:-}" ]; then
   HEALTH_URL="${VERIFY_BASE_URL%/}/up"
@@ -65,4 +131,15 @@ IFS="$OLDIFS"
 for path in "${paths[@]}"; do
   test -n "$path" || continue
   curl -fsS -o /dev/null "${VERIFY_BASE_URL%/}${path}"
+done
+
+validate_health_body
+
+for path in "/" "/up"; do
+  assert_header "$path" "Content-Security-Policy" "$EXPECTED_CSP"
+  assert_header "$path" "Strict-Transport-Security" "max-age=31536000; includeSubDomains"
+  assert_header "$path" "X-Content-Type-Options" "nosniff"
+  assert_header "$path" "X-Frame-Options" "DENY"
+  assert_header "$path" "Referrer-Policy" "strict-origin-when-cross-origin"
+  assert_header "$path" "Permissions-Policy" "$EXPECTED_PERMISSIONS_POLICY"
 done

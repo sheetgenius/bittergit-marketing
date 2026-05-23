@@ -7,6 +7,7 @@ INSTALL_LOG="${ARTIFACT_DIR}/prepare.install.log"
 AUDIT_LOG="${ARTIFACT_DIR}/prepare.audit.log"
 GENERATE_LOG="${ARTIFACT_DIR}/prepare.generate.log"
 SMOKE_LOG="${ARTIFACT_DIR}/prepare.smoke.log"
+TEST_LOG="${ARTIFACT_DIR}/prepare.test.log"
 PLAYWRIGHT_OUTPUT_DIR="${ARTIFACT_DIR}/playwright-output"
 
 mkdir -p "$ARTIFACT_DIR"
@@ -54,10 +55,12 @@ required = [
     "radicchio.json",
     "nuxt.config.ts",
     "playwright.config.ts",
+    "public/_headers",
     "qa/smoke.spec.ts",
     "Scripts/deploy",
     "Scripts/postdeploy-verify",
     "Scripts/radicchio",
+    "Scripts/static-headers.test.mjs",
     "Scripts/write-up.mjs",
     "server/routes/up.ts",
     "app/pages/index.vue",
@@ -73,6 +76,7 @@ smoke = pathlib.Path("qa/smoke.spec.ts").read_text(encoding="utf-8", errors="rep
 write_up = pathlib.Path("Scripts/write-up.mjs").read_text(encoding="utf-8", errors="replace")
 server_up = pathlib.Path("server/routes/up.ts").read_text(encoding="utf-8", errors="replace")
 postdeploy = pathlib.Path("Scripts/postdeploy-verify").read_text(encoding="utf-8", errors="replace")
+static_headers = pathlib.Path("public/_headers").read_text(encoding="utf-8", errors="replace")
 landing = pathlib.Path("app/pages/index.vue").read_text(encoding="utf-8", errors="replace")
 scripts = package.get("scripts", {})
 root_package = lock.get("packages", {}).get("", {})
@@ -89,17 +93,17 @@ checks = [
     },
     {
         "name": "package_scripts",
-        "result": "ok" if scripts.get("generate") == "nuxt generate" and scripts.get("prebuild") == "node Scripts/write-up.mjs" and scripts.get("pregenerate") == "node Scripts/write-up.mjs" and scripts.get("qa:smoke") == "playwright test --config playwright.config.ts" else "failed",
-        "scripts": {"generate": scripts.get("generate"), "prebuild": scripts.get("prebuild"), "pregenerate": scripts.get("pregenerate"), "qa:smoke": scripts.get("qa:smoke")},
+        "result": "ok" if scripts.get("generate") == "nuxt generate" and scripts.get("prebuild") == "node Scripts/write-up.mjs" and scripts.get("pregenerate") == "node Scripts/write-up.mjs" and scripts.get("qa:smoke") == "playwright test --config playwright.config.ts" and scripts.get("test:headers") == "node --test Scripts/static-headers.test.mjs" else "failed",
+        "scripts": {"generate": scripts.get("generate"), "prebuild": scripts.get("prebuild"), "pregenerate": scripts.get("pregenerate"), "qa:smoke": scripts.get("qa:smoke"), "test:headers": scripts.get("test:headers")},
     },
     {
         "name": "lockfile_versions",
-        "result": "ok" if lock_versions.get("nuxt") == "4.4.6" and lock_versions.get("nitropack") == "2.13.4" and lock_versions.get("vite") == "7.3.3" and lock_versions.get("devalue") == "5.8.1" and lock_versions.get("simple-git") == "3.36.0" and lock_versions.get("ws") == "8.21.0" and lock_versions.get("postcss") == "8.5.14" and lock_versions.get("defu") == "6.1.7" and lock_versions.get("unhead") == "2.1.15" else "failed",
+        "result": "ok" if lock_versions.get("nuxt") == "4.4.6" and lock_versions.get("nitropack") == "2.13.4" and lock_versions.get("vite") == "7.3.3" and lock_versions.get("devalue") == "5.8.1" and lock_versions.get("simple-git") == "3.36.0" and lock_versions.get("ws") in (None, "8.20.1") and lock_versions.get("postcss") == "8.5.14" and lock_versions.get("defu") == "6.1.7" and lock_versions.get("unhead") == "2.1.15" else "failed",
         "versions": lock_versions,
     },
     {
         "name": "lockfile_root",
-        "result": "ok" if root_package.get("name") == "bittergit-marketing" and root_package.get("dependencies", {}).get("nuxt") == "^4.4.2" else "failed",
+        "result": "ok" if root_package.get("name") == "bittergit-marketing" and root_package.get("dependencies", {}).get("nuxt") == "4.4.6" and root_package.get("dependencies", {}).get("vue-router") == "5.0.7" else "failed",
     },
     {
         "name": "radicchio_manifest",
@@ -109,15 +113,19 @@ checks = [
     },
     {
         "name": "playwright_static_server",
-        "result": "ok" if "PLAYWRIGHT_BASE_URL" in playwright and "python3 -m http.server 4173 --directory .output/public" in playwright and "npm run dev" not in playwright else "failed",
+        "result": "ok" if "PLAYWRIGHT_BASE_URL" in playwright and "python3 -m http.server ${port} --directory .output/public" in playwright and "reuseExistingServer: false" in playwright and "npm run dev" not in playwright else "failed",
     },
     {
         "name": "health_probe",
-        "result": "ok" if "service = 'bittergit.com'" in write_up and "app: 'BitterGit'" in write_up and "secret_material_returned: false" in write_up and "service: 'bittergit.com'" in server_up and "secret_material_returned: false" in server_up else "failed",
+        "result": "ok" if "service = 'bittergit.com'" in write_up and "hostname = 'bittergit.com'" in write_up and "RADICCHIO_RELEASE_SHA" in write_up and "release," in write_up and "app: 'BitterGit'" in write_up and "secret_material_returned: false" in write_up and "service: 'bittergit.com'" in server_up and "hostname: 'bittergit.com'" in server_up and "release," in server_up and "secret_material_returned: false" in server_up else "failed",
     },
     {
         "name": "postdeploy_contract",
-        "result": "ok" if "EXPECTED_GIT_SHA" in postdeploy and "/up" in postdeploy and "SMOKE_PATHS" in postdeploy else "failed",
+        "result": "ok" if "EXPECTED_GIT_SHA" in postdeploy and "/up" in postdeploy and "SMOKE_PATHS" in postdeploy and "Content-Security-Policy" in postdeploy and "secret_material_returned" in postdeploy else "failed",
+    },
+    {
+        "name": "static_security_headers",
+        "result": "ok" if "frame-ancestors 'none'" in static_headers and "Strict-Transport-Security: max-age=31536000; includeSubDomains" in static_headers and "X-Frame-Options: DENY" in static_headers and "X-Content-Type-Options: nosniff" in static_headers and "Referrer-Policy: strict-origin-when-cross-origin" in static_headers and "Permissions-Policy: camera=()" in static_headers else "failed",
     },
     {
         "name": "public_smoke_scope",
@@ -143,6 +151,7 @@ PY
 
 run_step "clean_install" "$INSTALL_LOG" npm ci
 run_step "production_dependency_audit" "$AUDIT_LOG" npm audit --omit=dev
+run_step "static_header_unit" "$TEST_LOG" npm run test:headers
 run_step "static_generate" "$GENERATE_LOG" npm run generate
 run_step "local_browser_smoke" "$SMOKE_LOG" npm run qa:smoke -- --output="$PLAYWRIGHT_OUTPUT_DIR"
 
@@ -158,6 +167,7 @@ cat >"${ARTIFACT_DIR}/prepare.json" <<JSON
   "logs": {
     "install": "${INSTALL_LOG}",
     "audit": "${AUDIT_LOG}",
+    "tests": "${TEST_LOG}",
     "generate": "${GENERATE_LOG}",
     "smoke": "${SMOKE_LOG}"
   },

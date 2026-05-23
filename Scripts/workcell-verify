@@ -83,25 +83,37 @@ def fetch(key, path):
             status = response.status
             body = response.read()
             content_type = response.headers.get("Content-Type", "")
+            headers = {name.lower(): value for name, value in response.headers.items()}
             final_url = response.geturl()
     except urllib.error.HTTPError as exc:
         status = exc.code
         body = exc.read()
         content_type = exc.headers.get("Content-Type", "") if exc.headers else ""
+        headers = {name.lower(): value for name, value in exc.headers.items()} if exc.headers else {}
         final_url = exc.geturl()
     except Exception as exc:
         status = 0
         body = f"{type(exc).__name__}: {exc}".encode()
         content_type = ""
+        headers = {}
         final_url = url
 
     body_path.write_bytes(body)
+    security_headers = {
+        "content-security-policy": headers.get("content-security-policy", ""),
+        "strict-transport-security": headers.get("strict-transport-security", ""),
+        "x-content-type-options": headers.get("x-content-type-options", ""),
+        "x-frame-options": headers.get("x-frame-options", ""),
+        "referrer-policy": headers.get("referrer-policy", ""),
+        "permissions-policy": headers.get("permissions-policy", ""),
+    }
     responses[key] = {
         "path": path,
         "url": url,
         "status": status,
         "bytes": len(body),
         "content_type": content_type,
+        "security_headers": security_headers,
         "final_url": final_url,
         "artifact_ref": str(body_path),
     }
@@ -116,15 +128,29 @@ record("root:headline", "Agent-native source control." in root and "BitterGit is
 record("root:access_form", 'action="/__submit"' in root and 'value="bittergit-early-access"' in root and "Request access" in root, artifact_ref=str(root_path))
 record("root:receipt_copy", "Verified-By" in root and "Run-Id" in root and "Wake-Id" in root, artifact_ref=str(root_path))
 
+expected_headers = {
+    "content-security-policy": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=(), browsing-topics=()",
+}
+for key in ["root", "up"]:
+    observed = responses[key]["security_headers"]
+    for header, expected in expected_headers.items():
+        record(f"{key}:header:{header}", observed.get(header) == expected, expected=expected, observed=observed.get(header), artifact_ref=responses[key]["artifact_ref"])
+
 try:
     up_payload = json.loads(up_text)
 except json.JSONDecodeError:
     up_payload = {}
 record("up:ok", up_status == 200 and up_payload.get("ok") is True, status=up_status, artifact_ref=str(up_path))
 record("up:service", up_payload.get("service") == "bittergit.com", service=up_payload.get("service"), artifact_ref=str(up_path))
+record("up:hostname", up_payload.get("hostname") == "bittergit.com", hostname=up_payload.get("hostname"), artifact_ref=str(up_path))
 record("up:app", up_payload.get("app") == "BitterGit", app=up_payload.get("app"), artifact_ref=str(up_path))
 record("up:no_secret_material", up_payload.get("secret_material_returned") is False, artifact_ref=str(up_path))
-record("up:release_identity", bool(up_payload.get("git_sha")), git_sha=up_payload.get("git_sha"), artifact_ref=str(up_path))
+record("up:release_identity", bool(up_payload.get("git_sha")) and up_payload.get("release") == up_payload.get("git_sha"), git_sha=up_payload.get("git_sha"), release=up_payload.get("release"), artifact_ref=str(up_path))
 if expected_release_sha:
     record("up:expected_release", up_payload.get("git_sha") == expected_release_sha, expected=expected_release_sha, observed=up_payload.get("git_sha"), artifact_ref=str(up_path))
 

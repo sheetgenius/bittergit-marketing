@@ -5,12 +5,8 @@ import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const service = 'bittergit.com'
-const gitSha =
-  process.env.BITTERGRID_RELEASE_SHA ||
-  process.env.VERSION ||
-  process.env.GIT_SHA ||
-  currentGitSha() ||
-  'dev'
+const hostname = 'bittergit.com'
+const release = releaseSha()
 
 mkdirSync(resolve(root, 'public'), { recursive: true })
 writeFileSync(
@@ -19,11 +15,27 @@ writeFileSync(
     ok: true,
     status: 'ok',
     service,
+    hostname,
     app: 'BitterGit',
-    git_sha: gitSha,
+    git_sha: release,
+    release,
     secret_material_returned: false,
   }) + '\n',
 )
+
+function releaseSha() {
+  const sha =
+    process.env.BITTERGIT_MARKETING_RELEASE_SHA ||
+    process.env.RADICCHIO_RELEASE_SHA ||
+    process.env.BITTERGRID_RELEASE_SHA ||
+    process.env.BITTER_RELEASE ||
+    process.env.VERSION ||
+    process.env.GIT_SHA ||
+    currentGitSha() ||
+    'dev'
+
+  return /^[0-9a-f]{40}$/i.test(sha) ? sha.toLowerCase() : sha
+}
 
 function currentGitSha() {
   try {
