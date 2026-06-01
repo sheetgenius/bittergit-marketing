@@ -522,7 +522,7 @@ button {
   gap: 0.5rem;
   padding: 0.6rem 1rem;
   background: var(--color-accent);
-  color: #f7fbf4;
+  color: var(--color-bg);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.18em;
@@ -533,7 +533,7 @@ button {
 .btn-primary:hover {
   background: var(--color-accent-dim);
   border-color: var(--color-accent-dim);
-  color: #f7fbf4;
+  color: var(--color-bg);
 }
 
 .btn-ghost {
