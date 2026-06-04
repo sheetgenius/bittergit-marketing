@@ -249,6 +249,21 @@ Remaining live caveats:
 - Radicchio does not currently emit canonical HTTP `Link` headers for Markdown
   alternates from repo-local `_headers`.
 
+## Second-Round Color And Release Truth Pass
+
+This follow-up pass keeps BitterGit publication-gated while removing avoidable
+stale public context:
+
+- `bitter grid services source check bittergit.com` reported `in_sync` with
+  remote, desired, and release all at
+  `85e9f4eda7c5d0809feb429425e8ca153f29acd9`.
+- The live `/up` payload is the authoritative active release identity; README,
+  AGENTS, and AI context no longer pin an older release SHA.
+- The page background no longer carries leftover green glow tokens. The ambient
+  accents now use BitterGit's indigo source-custody palette.
+- GitHub visibility is still private in this pass, so source links remain
+  withheld until repository visibility changes intentionally.
+
 ## Reviews Used
 
 X-High deploy/boundary reviewer:

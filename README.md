@@ -98,7 +98,8 @@ Current verified state:
 - Grid service id: `30`
 - service key: `bittergit.com`
 - GitHub source: `sheetgenius/bittergit-marketing`
-- active release SHA: `a99511f197ef2b44cb2572daa3a706410782fa9a`
+- active release SHA: reported by
+  [`bittergit.com/up`](https://bittergit.com/up)
 - deployment status: `ready`
 - verification status: `passed`
 - health path: `/up`

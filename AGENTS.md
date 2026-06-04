@@ -40,8 +40,8 @@ Current live deployment is Grid-managed and Radicchio/static:
 - health path: `/up`
 - Radicchio site id: `102`
 - publish directory: `.output/public`
-- current verified release after the 2026-06-04 public-repo-shape pass:
-  `090e1ec530759ce2926b9fb121238cfe09007731`
+- active release identity: the live `/up` payload is authoritative; do not pin
+  a specific SHA here because public-shape commits intentionally change it.
 
 Known caveats:
 

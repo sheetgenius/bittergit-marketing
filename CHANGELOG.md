@@ -31,6 +31,13 @@ Use this section for changes committed after the latest dated entry.
 - Updated postdeploy verification to assert the current Radicchio edge header
   baseline instead of a stricter static-host `_headers` contract that Radicchio
   does not apply.
+- Replaced stale pinned release SHAs in public docs with `/up` as the
+  authoritative live release identity.
+
+### Website
+
+- Removed leftover green page-background glows from the BitterGit palette and
+  aligned them with the indigo source-custody accent.
 
 ## 2026-06-04
 
