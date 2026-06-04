@@ -102,7 +102,8 @@ class RadicchioCli
   def deploy(manifest)
     payload = build_payload(manifest)
     result = call_tool(manifest, "radicchio_deploy", site_id: manifest["site_id"], files: payload[:files])
-    abort "Radicchio deploy failed: #{result["error"]}" if result.is_a?(Hash) && result["error"]
+    deploy_error = result["error"] || result.dig("deploy", "error") if result.is_a?(Hash)
+    abort "Radicchio deploy failed: #{deploy_error}" if deploy_error
 
     {
       status: "deployed",
