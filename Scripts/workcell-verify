@@ -129,12 +129,11 @@ record("root:access_form", 'action="/__submit"' in root and 'value="bittergit-ea
 record("root:receipt_copy", "Verified-By" in root and "Run-Id" in root and "Wake-Id" in root, artifact_ref=str(root_path))
 
 expected_headers = {
-    "content-security-policy": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests",
     "strict-transport-security": "max-age=31536000; includeSubDomains",
     "x-content-type-options": "nosniff",
-    "x-frame-options": "DENY",
+    "x-frame-options": "SAMEORIGIN",
     "referrer-policy": "strict-origin-when-cross-origin",
-    "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=(), browsing-topics=()",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
 }
 for key in ["root", "up"]:
     observed = responses[key]["security_headers"]

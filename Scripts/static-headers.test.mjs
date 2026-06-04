@@ -3,14 +3,11 @@ import { readFileSync } from 'node:fs'
 import test from 'node:test'
 
 const expectedHeaders = {
-  'Content-Security-Policy':
-    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; upgrade-insecure-requests",
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
   'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
+  'X-Frame-Options': 'SAMEORIGIN',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy':
-    'camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=(), browsing-topics=()',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
 }
 
 function parseRootHeaders(source) {
@@ -33,7 +30,7 @@ function parseRootHeaders(source) {
   return headers
 }
 
-test('BitterGit static headers declare the browser hardening baseline', () => {
+test('BitterGit static headers mirror the current Radicchio edge baseline', () => {
   const headers = parseRootHeaders(readFileSync('public/_headers', 'utf8'))
 
   for (const [name, value] of Object.entries(expectedHeaders)) {

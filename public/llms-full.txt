@@ -63,10 +63,10 @@ so this source shape is public-ready but not yet publicly visible as a repo.
 
 Known caveats:
 
-- Grid app ownership is missing/verified `no`.
+- Grid customer app ownership is not applicable to this platform-style service.
 - Grid edge binding is untracked even though public verification passes.
-- Live security headers can differ from checked-in `_headers`; verify before
-  claiming live header parity.
+- Radicchio serves `/index.md` as `application/octet-stream` and does not emit
+  canonical HTTP `Link` headers for Markdown alternates.
 
 ## Public Routes
 

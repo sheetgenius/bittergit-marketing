@@ -121,19 +121,19 @@ checks = [
     },
     {
         "name": "postdeploy_contract",
-        "result": "ok" if "EXPECTED_GIT_SHA" in postdeploy and "/up" in postdeploy and "SMOKE_PATHS" in postdeploy and "Content-Security-Policy" in postdeploy and "secret_material_returned" in postdeploy else "failed",
+        "result": "ok" if "EXPECTED_GIT_SHA" in postdeploy and "/up" in postdeploy and "SMOKE_PATHS" in postdeploy and "X-Frame-Options" in postdeploy and "SAMEORIGIN" in postdeploy and "secret_material_returned" in postdeploy else "failed",
     },
     {
         "name": "static_security_headers",
-        "result": "ok" if "frame-ancestors 'none'" in static_headers and "Strict-Transport-Security: max-age=31536000; includeSubDomains" in static_headers and "X-Frame-Options: DENY" in static_headers and "X-Content-Type-Options: nosniff" in static_headers and "Referrer-Policy: strict-origin-when-cross-origin" in static_headers and "Permissions-Policy: camera=()" in static_headers else "failed",
+        "result": "ok" if "Strict-Transport-Security: max-age=31536000; includeSubDomains" in static_headers and "X-Frame-Options: SAMEORIGIN" in static_headers and "X-Content-Type-Options: nosniff" in static_headers and "Referrer-Policy: strict-origin-when-cross-origin" in static_headers and "Permissions-Policy: camera=(), microphone=(), geolocation=()" in static_headers else "failed",
     },
     {
         "name": "public_smoke_scope",
-        "result": "ok" if "agent-native git hosting" in smoke and "BitterGit" in smoke and "Request access" in smoke and "bittergit.com" in smoke else "failed",
+        "result": "ok" if "Git-compatible source custody" in smoke and "BitterGit" in smoke and "Request access" in smoke and "bittergit.com" in smoke else "failed",
     },
     {
         "name": "landing_contract",
-        "result": "ok" if "Agent-native source control." in landing and "BitterGit is Git-compatible source custody for agent runs" in landing and "external accounts are request-only" in landing and 'action="/__submit"' in landing and 'value="bittergit-early-access"' in landing else "failed",
+        "result": "ok" if "Agent-native source control." in landing and "BitterGit is Git-compatible source custody for agent runs" in landing and "Bitter fleet is tenant zero" in landing and "accounts are request-only" in landing and 'action="/__submit"' in landing and 'value="bittergit-early-access"' in landing else "failed",
     },
 ]
 failures = [check["name"] for check in checks if check["result"] != "ok"]

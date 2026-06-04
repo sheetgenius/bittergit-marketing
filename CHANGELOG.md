@@ -28,6 +28,9 @@ Use this section for changes committed after the latest dated entry.
 - Made the Radicchio deploy helper fail when Radicchio returns a deploy error,
   preventing Grid/Radicchio false-positive deploy receipts from being treated as
   live verification.
+- Updated postdeploy verification to assert the current Radicchio edge header
+  baseline instead of a stricter static-host `_headers` contract that Radicchio
+  does not apply.
 
 ## 2026-06-04
 

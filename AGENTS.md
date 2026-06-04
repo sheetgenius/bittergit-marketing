@@ -40,17 +40,18 @@ Current live deployment is Grid-managed and Radicchio/static:
 - health path: `/up`
 - Radicchio site id: `102`
 - publish directory: `.output/public`
-- current verified release before this pass:
-  `a99511f197ef2b44cb2572daa3a706410782fa9a`
+- current verified release after the 2026-06-04 public-repo-shape pass:
+  `090e1ec530759ce2926b9fb121238cfe09007731`
 
 Known caveats:
 
-- Grid app ownership is missing/verified `no`.
+- Grid now reports platform-style owner metadata, but ordinary customer app
+  ownership is still not applicable to this service.
 - Grid edge binding is untracked even though live verification passes.
 - The manual `Scripts/deploy` path is not the observed source-event deploy
   trigger.
-- Live security headers can differ from checked-in `_headers`; verify before
-  claiming live header parity.
+- Radicchio currently serves Markdown files as `application/octet-stream` and
+  does not emit canonical HTTP `Link` headers from repo-local `_headers`.
 
 ## Change Rules
 

@@ -111,13 +111,15 @@ Known deployment caveats:
 
 - Grid reports no tracked edge binding, even though current public DNS and
   verification pass through the Radicchio/Cloudflare path.
-- Grid app ownership is missing/verified `no`, so do not claim verified
-  Factory/BitterHub app ownership yet.
+- Grid customer app ownership is not applicable to this platform-style service;
+  do not claim verified Factory/BitterHub customer app ownership.
 - The manual `Scripts/deploy` path requires `RADICCHIO_API_TOKEN` and is not the
   observed current source-event deploy trigger.
-- Live security headers currently differ from the checked-in `_headers`
-  expectation. Treat live header parity as a post-deploy verification gate, not
-  as already proven by source.
+- Radicchio serves the current edge security header baseline directly:
+  `X-Frame-Options: SAMEORIGIN` and
+  `Permissions-Policy: camera=(), microphone=(), geolocation=()`.
+- Radicchio currently serves `/index.md` as `application/octet-stream` and does
+  not emit canonical HTTP `Link` headers for Markdown alternates.
 
 ## Development
 

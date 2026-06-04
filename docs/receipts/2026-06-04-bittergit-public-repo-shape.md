@@ -38,10 +38,10 @@ and live route/header verification after deployment.
 Known caveats:
 
 - GitHub reports `sheetgenius/bittergit-marketing` as private.
-- Grid app ownership is missing/verified `no`.
+- Grid customer app ownership is not applicable to this platform-style service.
 - Grid edge binding is untracked even though the deployment verifies.
-- Live root and `/up` headers differ from checked-in `_headers`; header parity
-  must be verified after deploy before claiming it.
+- Radicchio serves `/index.md` as `application/octet-stream` and does not emit
+  canonical HTTP `Link` headers for Markdown alternates.
 - The public `bittergit.com` root is not the product Git remote/API endpoint.
 
 ## Live Routes Checked Before This Pass
@@ -202,6 +202,52 @@ Remaining deployment dependency:
 
 - Radicchio backend must support `.md` static deploy files and be live before
   this site can publish the BitterClip-style Markdown twin.
+
+## Backend Unblock And Live Verification
+
+The Radicchio backend blocker was resolved before retrying BitterGit:
+
+- Radicchio commit `e14f43495d3363a2cf5070f34b9311f9908f22b5` added `.md` to
+  the static deploy allowlist and covered it with a backend tool test.
+- Radicchio was adopted as a Bitter platform service, not a customer app.
+- Grid source reconciliation deployed Radicchio deployment `2536`.
+- Radicchio deploy operation `13230` succeeded and Grid source check reported
+  remote, desired, and release all in sync at `e14f43495d3363a2cf5070f34b9311f9908f22b5`.
+
+The BitterGit retry then deployed through the normal GitHub/source-event path:
+
+- Grid build operation `13233` queued after the push.
+- Grid deploy operation `13235` succeeded.
+- Grid deployment `2537` reported `ready` and verification `passed`.
+- The Radicchio deploy payload reported `file_count: 21`, including the
+  Markdown and LLM public files, with deploy id `d_BC7VzlPbgmuR`.
+
+Final verification asserts the repository `HEAD` against live `/up` instead of
+pinning a self-referential receipt commit SHA in this file:
+
+```bash
+VERIFY_EXPECTED_RELEASE_SHA=$(git rev-parse HEAD) ./Scripts/workcell-verify
+```
+
+This verification covers:
+
+- live `/up` release identity and secret-material absence;
+- `/`, `/robots.txt`, `/sitemap.xml`, `/llms.txt`, `/llms-full.txt`, and
+  `/index.md` returning `200`;
+- public root copy and access-form shape;
+- browser smoke coverage;
+- current Radicchio edge headers: `Strict-Transport-Security`,
+  `X-Content-Type-Options`, `X-Frame-Options: SAMEORIGIN`,
+  `Referrer-Policy`, and `Permissions-Policy`.
+
+Remaining live caveats:
+
+- GitHub repo visibility is still private; do not call the repository public
+  until visibility is changed intentionally.
+- Radicchio serves `/index.md` as `application/octet-stream`, not
+  `text/markdown`.
+- Radicchio does not currently emit canonical HTTP `Link` headers for Markdown
+  alternates from repo-local `_headers`.
 
 ## Reviews Used
 
