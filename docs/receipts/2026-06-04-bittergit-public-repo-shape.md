@@ -263,6 +263,8 @@ stale public context:
   earlier green value.
 - The early-access CTA now routes to BitterDesk instead of a static `/__submit`
   endpoint, which returns `404` on the live Radicchio host.
+- `Scripts/workcell-verify` now asserts the BitterDesk access path rather than
+  the removed form.
 - GitHub visibility is still private in this pass, so source links remain
   withheld until repository visibility changes intentionally.
 

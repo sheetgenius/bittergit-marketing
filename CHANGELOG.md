@@ -41,6 +41,8 @@ Use this section for changes committed after the latest dated entry.
 - Aligned the Nuxt loading indicator with the same indigo accent.
 - Replaced the dead static early-access form with a truthful BitterDesk request
   path and propagated the access boundary through Markdown and AI files.
+- Updated live workcell verification to assert the BitterDesk access path
+  instead of the removed static form.
 
 ### Public Hygiene
 

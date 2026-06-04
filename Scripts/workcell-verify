@@ -125,7 +125,7 @@ up_status, up_text, up_path = fetch("up", "/up")
 
 record("root:status", root_status == 200, status=root_status, artifact_ref=str(root_path))
 record("root:headline", "Agent-native source control." in root and "BitterGit is Git-compatible source custody for agent runs" in root and "external accounts are request-only" in root, artifact_ref=str(root_path))
-record("root:access_form", 'action="/__submit"' in root and 'value="bittergit-early-access"' in root and "Request access" in root, artifact_ref=str(root_path))
+record("root:access_path", "Start request in BitterDesk" in root and 'href="https://bitterdesk.com"' in root and "There is no self-serve signup queue or static form endpoint" in root, artifact_ref=str(root_path))
 record("root:receipt_copy", "Verified-By" in root and "Run-Id" in root and "Wake-Id" in root, artifact_ref=str(root_path))
 
 expected_headers = {
@@ -173,8 +173,8 @@ entries = [
         "key": "marketing.front_door",
         "actor": "signed_out_engineer",
         "entrypoint": "/",
-        "summary": "BitterGit public page presents the agent-native source custody offer, tenant-zero status, run receipt language, and access form.",
-        "proves": ["root_http_200", "headline", "receipt_copy", "access_form", "browser_smoke"],
+        "summary": "BitterGit public page presents the agent-native source custody offer, tenant-zero status, run receipt language, and BitterDesk access path.",
+        "proves": ["root_http_200", "headline", "receipt_copy", "access_path", "browser_smoke"],
         "artifact_refs": [str(root_path), qa_smoke_log, http_report],
         "result": "failed" if any(name.startswith(("root:", "qa_smoke:")) for name in failures) else "ok",
     },
@@ -195,8 +195,8 @@ smoke = {
     "expected_release_sha": expected_release_sha,
     "entries": entries,
     "limitations": [
-        "This verification covers public page, browser smoke, access form shape, and release identity.",
-        "It does not submit the Radicchio intake form."
+        "This verification covers public page, browser smoke, access path shape, and release identity.",
+        "It does not submit a support request."
     ],
     "result": report["result"],
     "failures": failures,
