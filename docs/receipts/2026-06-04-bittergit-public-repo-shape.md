@@ -272,12 +272,14 @@ stale public context:
 
 ## Public Visibility Pass
 
-This pass is intended to change `sheetgenius/bittergit-marketing` from private
-to public after source-link verification. Once the visibility flip is confirmed,
-current publication truth is:
+This pass changed `sheetgenius/bittergit-marketing` from private to public after
+source-link verification. Current publication truth is:
 
 - public source repository:
   `https://github.com/sheetgenius/bittergit-marketing`;
+- GitHub unauthenticated API reports `private: false` and `visibility: public`;
+- GitHub homepage is `https://bittergit.com`, with topics `bitter`,
+  `bittergit`, `marketing-site`, `nuxt`, and `radicchio`;
 - live source link coverage: footer, README, Markdown mirror, `llms.txt`,
   `llms-full.txt`, and JSON-LD metadata;
 - remaining caveats: Radicchio serves `/index.md` as
