@@ -2,7 +2,7 @@
 useSeoMeta({
   title: 'BitterGit — Agent-native source control',
   description:
-    'BitterGit is agent-native git hosting for agent fleets. Commits keep native git semantics while carrying signed run provenance and BitterGrid verification receipts.',
+    'BitterGit is Git-compatible source custody for agent runs, with signed run provenance, run-level review, and BitterGrid verification receipts.',
 })
 
 const stream = [
@@ -53,7 +53,7 @@ const stream = [
 const proofPoints = [
   {
     label: 'Native git',
-    value: 'Clone, branch, fetch, pull, blame, and log keep working from ordinary clients.',
+    value: 'Repos keep ordinary Git semantics; BitterGit adds source-custody context around agent work.',
   },
   {
     label: 'Signed trailers',
@@ -61,7 +61,7 @@ const proofPoints = [
   },
   {
     label: 'Verified receipt',
-    value: 'Run review includes the build, test, probe, accept, and revert trail.',
+    value: 'Run review can include the build, test, probe, accept, and revert trail.',
   },
 ]
 
@@ -69,17 +69,17 @@ const reasons = [
   {
     label: 'Run-linked by construction',
     body:
-      'Every agent commit carries a signed Run-Id and Wake-Id trailer, stamped by the Bitter CLI at commit time. The chain from wake packet to diff to verification is a property of the commit itself — not a database the server has to keep in sync.',
+      'Every agent commit should carry a signed Run-Id and Wake-Id trailer, stamped by the Bitter CLI at commit time. The chain from wake packet to diff to verification belongs with the source-custody record, not only with a dashboard that can drift.',
   },
   {
     label: 'The run is the review unit',
     body:
-      'A single run can produce one commit or forty, across one repo or three. Instead of forcing that into a pull request, BitterGit groups commits by the run that made them. Accept, revert, or supersede at the run level. PR theater, retired.',
+      'A single run can produce one commit or forty, across one repo or three. Instead of forcing that into a pull request first, BitterGit groups commits by the run that made them. Accept, revert, or supersede at the run level.',
   },
   {
     label: 'Boring git underneath',
     body:
-      'Clone, push, pull, branch, tag, blame, log — they all work the way you already know. The provenance is a trailer on the commit, not a new protocol to learn. Any git client can read a BitterGit repo.',
+      'Clone, push, pull, branch, tag, blame, log — the product boundary stays Git-compatible. The provenance is source-custody metadata around the commit, not a new version-control language.',
   },
 ]
 
@@ -94,7 +94,7 @@ const flow = [
     index: '02',
     title: 'Capture the change.',
     body:
-      '`bitter git commit` writes the trailer and signs it with the run key. The server-side receive hook rejects any push whose commits don\'t carry valid provenance. Agents can\'t forget, can\'t forge, can\'t drift.',
+      '`bitter git commit` writes the trailer and signs it with the run key. Receive validation gives BitterGit a concrete place to reject, audit, or repair agent-originated changes whose provenance does not match the run.',
   },
   {
     index: '03',
@@ -107,9 +107,9 @@ const flow = [
 const trySteps = [
   {
     title: 'Wrap the repo you already have.',
-    command: 'bitter git clone git@bittergit.com:team/service.git',
+    command: 'bitter git clone team/service',
     body:
-      'BitterGit does not ask developers to learn a replacement VCS. The wrapper adds provenance around normal git operations.',
+      'BitterGit does not ask developers to learn a replacement VCS. The wrapper adds provenance around normal git operations. The public marketing root is not itself the Git remote endpoint.',
   },
   {
     title: 'Let the run make the commit.',
@@ -126,13 +126,13 @@ const trySteps = [
 ]
 
 const inside = [
-  { label: 'Protocol', value: 'Standard git over HTTPS and SSH. Any client can clone, fetch, and pull.' },
+  { label: 'Protocol', value: 'Standard Git semantics through the BitterGit service boundary. The public site is only the marketing surface.' },
   { label: 'Client', value: '`bitter git` — a thin wrapper over native git that stamps provenance at commit time.' },
-  { label: 'Identity', value: 'Humans via SSH key or passkey. Agents via run-scoped ephemeral Ed25519 keypair.' },
-  { label: 'Provenance', value: 'Signed Run-Id / Wake-Id trailers on every agent commit. Verified at receive.' },
+  { label: 'Identity', value: 'Humans through account authority. Agents through run-scoped signing material.' },
+  { label: 'Provenance', value: 'Signed Run-Id / Wake-Id trailers on agent commits, validated before the run is accepted.' },
   { label: 'Review unit', value: 'The run. Commits group automatically across repos; decisions operate on the run.' },
-  { label: 'Verification', value: 'Wired to BitterGrid. Build, tests, probes attach before accept.' },
-  { label: 'Audit', value: 'Every push and decision emits to BitterLog. Queryable substrate for future wake packets.' },
+  { label: 'Verification', value: 'Wired to BitterGrid. Build, tests, probes, and deploy receipts attach before accept when the runtime path is connected.' },
+  { label: 'Audit', value: 'Source-custody events are intended to feed BitterLog so future wake packets can query prior work.' },
   { label: 'Hosting', value: 'Your own substrate. Sovereign over writes. Open over reads. Own failure domain.' },
 ]
 
@@ -230,13 +230,14 @@ onMounted(() => {
             Gets it done.
           </p>
           <p class="mt-8 max-w-2xl text-lg leading-relaxed text-muted-strong md:text-xl">
-            BitterGit is git hosting for agent fleets and agent-run work loops. It keeps the protocol developers
-            already trust, then stamps every agent commit with the run that made it,
-            the wake that asked for it, and the verification that cleared it.
+            BitterGit is Git-compatible source custody for agent runs. It keeps the repository
+            semantics developers already trust, then attaches signed run and wake provenance,
+            run-level review, and BitterGrid verification receipts around agent work.
           </p>
           <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">
             Open the run, not a bot account. Accept or revert the whole blast radius
-            with the receipts attached.
+            with the receipts attached. Today the Bitter fleet is tenant zero; external
+            accounts are request-only.
           </p>
 
           <div class="mt-10 flex flex-wrap items-center gap-3">
@@ -329,6 +330,10 @@ onMounted(() => {
             A developer should understand BitterGit from one run: native git goes in,
             signed provenance comes out, and the verification receipt travels with the change.
           </p>
+          <p class="mt-4 text-base leading-relaxed text-muted">
+            Current status: the Bitter fleet migration and receipt shape are being proven first.
+            Public account access is by request, not self-serve signup.
+          </p>
 
           <div class="receipt-panel mt-8">
             <div class="flex items-center justify-between gap-4 border-b border-line px-4 py-3">
@@ -395,8 +400,9 @@ onMounted(() => {
           Wake the agent. Capture the change. Review the run.
         </h2>
         <p class="mt-6 max-w-3xl text-lg leading-relaxed text-muted-strong">
-          The plaintext of the work lives between the wake packet that asked for it and the run
-          that produced it. Everything in between is signed, verified, and visible.
+          The work lives between the wake packet that asked for it and the run
+          that produced it. BitterGit's job is to keep that source-custody chain
+          visible enough to verify, accept, revert, or repair.
         </p>
 
         <div class="mt-14 grid gap-10 md:grid-cols-3 md:gap-12">
@@ -502,7 +508,7 @@ Signature: ed25519:<span class="cli-block__comment">…</span></pre>
           Request early access.
         </h2>
         <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted-strong">
-          BitterGit is migrating off GitHub first &mdash; the Bitter fleet itself is tenant zero.
+          BitterGit is proving the Bitter fleet migration first &mdash; the Bitter fleet itself is tenant zero.
           Tell us what you'd want to host here, and which loop you'd point at it.
         </p>
         <p class="mt-3 max-w-2xl text-lg leading-relaxed text-muted">

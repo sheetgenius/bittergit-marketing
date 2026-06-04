@@ -30,21 +30,30 @@ export default defineNuxtConfig({
         {
           name: 'description',
           content:
-            'BitterGit is agent-native git hosting for agent fleets. Commits keep native git semantics while carrying signed run provenance and BitterGrid verification receipts.',
+            'BitterGit is Git-compatible source custody for agent runs, with signed run provenance, run-level review, and BitterGrid verification receipts.',
         },
         { property: 'og:title', content: 'BitterGit — Agent-native source control' },
         {
           property: 'og:description',
           content:
-            'Native git goes in, signed run provenance comes out, and the verification receipt travels with the change.',
+            'Ordinary Git semantics underneath; signed run provenance and verification receipts around agent work.',
         },
         { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: 'https://bittergit.com' },
+        { property: 'og:url', content: 'https://bittergit.com/' },
+        { name: 'twitter:card', content: 'summary' },
+        { name: 'twitter:title', content: 'BitterGit — Agent-native source control' },
+        {
+          name: 'twitter:description',
+          content:
+            'Git-compatible source custody for agent runs, with signed provenance and Grid receipts.',
+        },
         { name: 'color-scheme', content: 'light dark' },
         { name: 'theme-color', content: '#f7f7fb', media: '(prefers-color-scheme: light)' },
         { name: 'theme-color', content: '#080909', media: '(prefers-color-scheme: dark)' },
       ],
       link: [
+        { rel: 'canonical', href: 'https://bittergit.com/' },
+        { rel: 'alternate', type: 'text/markdown', href: 'https://bittergit.com/index.md' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         {

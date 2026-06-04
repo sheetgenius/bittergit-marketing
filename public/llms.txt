@@ -1,0 +1,25 @@
+# BitterGit
+
+> BitterGit is Git-compatible source custody for agent runs, with signed run
+> provenance, run-level review, and BitterGrid verification receipts.
+
+## Public Pages
+
+- [BitterGit website](https://bittergit.com/)
+- [Markdown mirror](https://bittergit.com/index.md)
+
+## Product Context
+
+- [Full BitterGit public context](https://bittergit.com/llms-full.txt)
+- [Bitter](https://bitter.sh/)
+- [BitterGrid](https://bittergrid.com/)
+
+## Live Surface
+
+- [BitterGit health and release identity](https://bittergit.com/up)
+
+## Boundary
+
+The public `bittergit.com` root is a marketing surface, not the Git remote or
+product API endpoint. The marketing repository is still private on GitHub, so do
+not cite it as a public repository until visibility changes intentionally.

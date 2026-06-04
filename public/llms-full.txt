@@ -1,0 +1,89 @@
+# BitterGit Public Context
+
+## Product Sentence
+
+BitterGit is Git-compatible source custody for agent runs, with signed run
+provenance, run-level review, and BitterGrid verification receipts.
+
+## User And Job
+
+BitterGit is built for operators and teams whose agents commit across multiple
+repositories. They need to know which run made what, what verified, what failed,
+and what can be accepted or reverted without treating a bot account as the unit
+of review.
+
+## Object Loop
+
+```text
+WakePacket -> AgentRun -> Commit -> RunTrailers -> RunBundle -> GridReceipt -> Accept/RevertDecision -> SourceHistory
+```
+
+The source-custody record should connect the wake packet that asked for work,
+the agent run that did the work, the commits it produced, the signed trailers on
+those commits, the run bundle that groups them, the BitterGrid receipt that
+verified them, and the human or agent decision that accepted, reverted, or
+superseded the change.
+
+## Place In Bitter
+
+Bitter CLI stamps and signs run provenance around ordinary Git operations.
+BitterGit preserves repositories, source history, commit provenance, and
+source-linked workflow metadata. BitterGrid builds, deploys, verifies, and
+records runtime receipts. BitterLog can carry source-custody evidence into
+future wake packets.
+
+## Boundary
+
+BitterGit is not a GitHub clone, project tracker, social network, CI system,
+deploy executor, account/billing layer, or secret-value store.
+
+The public `bittergit.com` root is a marketing surface, not the Git remote or
+product API endpoint. The product service repository owns Git remotes,
+repository storage, account integration, and source-custody verification gates.
+
+## Current Status
+
+Bitter's own fleet is tenant zero. External accounts are request-only.
+
+The public marketing site is live and Grid-verified at the release reported by
+`https://bittergit.com/up`. The marketing repository is still private on GitHub,
+so this source shape is public-ready but not yet publicly visible as a repo.
+
+## Deployment Facts
+
+- service key: `bittergit.com`
+- Grid service id: `30`
+- active verified release before this pass:
+  `a99511f197ef2b44cb2572daa3a706410782fa9a`
+- health path: `/up`
+- Radicchio site id: `102`
+- publish directory: `.output/public`
+- deployment path: GitHub source event -> BitterGrid build/deploy ->
+  Radicchio/static site
+
+Known caveats:
+
+- Grid app ownership is missing/verified `no`.
+- Grid edge binding is untracked even though public verification passes.
+- Live security headers can differ from checked-in `_headers`; verify before
+  claiming live header parity.
+
+## Public Routes
+
+- HTML: https://bittergit.com/
+- Markdown: https://bittergit.com/index.md
+- Robots: https://bittergit.com/robots.txt
+- Sitemap: https://bittergit.com/sitemap.xml
+- AI index: https://bittergit.com/llms.txt
+- Full AI context: https://bittergit.com/llms-full.txt
+- Health: https://bittergit.com/up
+
+## Repository Commands
+
+```bash
+npm install
+npm run generate
+npm run qa:smoke
+npm run test:headers
+Scripts/workcell-verify
+```

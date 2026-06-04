@@ -14,13 +14,19 @@ test('homepage exposes meta description and og tags', async ({ page }) => {
   await page.goto('/')
 
   const description = page.locator('meta[name="description"]')
-  await expect(description).toHaveAttribute('content', /agent-native git hosting/i)
+  await expect(description).toHaveAttribute('content', /Git-compatible source custody/i)
 
   const ogTitle = page.locator('meta[property="og:title"]')
   await expect(ogTitle).toHaveAttribute('content', /BitterGit/i)
 
   const ogDescription = page.locator('meta[property="og:description"]')
-  await expect(ogDescription).toHaveAttribute('content', /verification receipt/i)
+  await expect(ogDescription).toHaveAttribute('content', /signed run provenance/i)
+
+  const canonical = page.locator('link[rel="canonical"]')
+  await expect(canonical).toHaveAttribute('href', 'https://bittergit.com/')
+
+  const markdownAlternate = page.locator('link[rel="alternate"][type="text/markdown"]')
+  await expect(markdownAlternate).toHaveAttribute('href', 'https://bittergit.com/index.md')
 })
 
 test('health endpoint reports the deploy receipt shape', async ({ request }) => {
@@ -44,7 +50,8 @@ test('homepage hero heading is visible', async ({ page }) => {
   await page.goto('/')
   const hero = page.locator('h1').first()
   await expect(hero).toBeVisible()
-  await expect(page.getByText('BitterGit is git hosting for agent fleets')).toBeVisible()
+  await expect(page.getByText('BitterGit is Git-compatible source custody for agent runs')).toBeVisible()
+  await expect(page.getByText('external accounts are request-only')).toBeVisible()
   await expect(page.getByRole('link', { name: 'See first run' })).toBeVisible()
 })
 
@@ -94,3 +101,19 @@ for (const width of [390, 768, 1440]) {
     })
   })
 }
+
+test('public discovery files are reachable', async ({ request }) => {
+  const expectedText = new Map([
+    ['/robots.txt', 'Sitemap: https://bittergit.com/sitemap.xml'],
+    ['/sitemap.xml', 'https://bittergit.com/index.md'],
+    ['/llms.txt', 'BitterGit'],
+    ['/llms-full.txt', 'BitterGit'],
+    ['/index.md', 'BitterGit'],
+  ])
+
+  for (const [route, text] of expectedText.entries()) {
+    const response = await request.get(route)
+    expect(response.ok(), `${route} should be public`).toBe(true)
+    expect(await response.text()).toContain(text)
+  }
+})

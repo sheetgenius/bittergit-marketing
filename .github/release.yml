@@ -1,0 +1,30 @@
+changelog:
+  categories:
+    - title: Product Context
+      labels:
+        - product-context
+        - positioning
+    - title: Website
+      labels:
+        - website
+        - copy
+        - design
+        - seo
+    - title: Deployment
+      labels:
+        - deployment
+        - radicchio
+        - verification
+    - title: Repository Metadata
+      labels:
+        - repository-metadata
+        - docs
+        - github
+    - title: Public Hygiene
+      labels:
+        - public-hygiene
+        - security
+        - boundary
+    - title: Other
+      labels:
+        - "*"

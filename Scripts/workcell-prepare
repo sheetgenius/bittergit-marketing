@@ -133,7 +133,7 @@ checks = [
     },
     {
         "name": "landing_contract",
-        "result": "ok" if "Agent-native source control." in landing and "BitterGit is git hosting for agent fleets" in landing and 'action="/__submit"' in landing and 'value="bittergit-early-access"' in landing else "failed",
+        "result": "ok" if "Agent-native source control." in landing and "BitterGit is Git-compatible source custody for agent runs" in landing and "external accounts are request-only" in landing and 'action="/__submit"' in landing and 'value="bittergit-early-access"' in landing else "failed",
     },
 ]
 failures = [check["name"] for check in checks if check["result"] != "ok"]
