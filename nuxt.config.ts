@@ -41,8 +41,8 @@ export default defineNuxtConfig({
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://bittergit.com' },
         { name: 'color-scheme', content: 'light dark' },
-        { name: 'theme-color', content: '#f5f2ec', media: '(prefers-color-scheme: light)' },
-        { name: 'theme-color', content: '#0a0c0a', media: '(prefers-color-scheme: dark)' },
+        { name: 'theme-color', content: '#f7f7fb', media: '(prefers-color-scheme: light)' },
+        { name: 'theme-color', content: '#080909', media: '(prefers-color-scheme: dark)' },
       ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -58,7 +58,7 @@ export default defineNuxtConfig({
           key: 'theme-init',
           tagPosition: 'head',
           innerHTML:
-            "(function(){try{var url=new URL(window.location.href);var qp=url.searchParams.get('theme');if(qp==='light'||qp==='dark'){document.documentElement.dataset.theme=qp;return;}var stored=window.localStorage.getItem('bittergit-theme');if(stored==='light'||stored==='dark'){document.documentElement.dataset.theme=stored;}else{document.documentElement.dataset.theme=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}}catch(_){document.documentElement.dataset.theme='light';}})();",
+            "(function(){try{var url=new URL(window.location.href);var qp=url.searchParams.get('theme');if(qp==='light'||qp==='dark'){document.documentElement.dataset.theme=qp;return;}var stored=window.localStorage.getItem('bittergit-theme');if(stored==='light'||stored==='dark'){document.documentElement.dataset.theme=stored;}else{document.documentElement.dataset.theme='dark';}}catch(_){document.documentElement.dataset.theme='dark';}})();",
         },
       ],
     },

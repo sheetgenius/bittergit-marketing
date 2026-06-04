@@ -157,16 +157,15 @@ const personas = [
   },
 ]
 
-const theme = ref<'light' | 'dark'>('light')
+const theme = ref<'light' | 'dark'>('dark')
 const themeReady = ref(false)
 const themeLabel = computed(() => (theme.value === 'dark' ? 'Light mode' : 'Dark mode'))
 
-const currentTheme = () =>
-  document.documentElement.dataset.theme === 'dark' ||
-  (!document.documentElement.dataset.theme &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ? 'dark'
-    : 'light'
+const currentTheme = () => {
+  const stored = document.documentElement.dataset.theme
+  if (stored === 'light' || stored === 'dark') return stored
+  return 'dark'
+}
 
 const applyTheme = (next: 'light' | 'dark') => {
   theme.value = next
@@ -221,7 +220,7 @@ onMounted(() => {
 
       <div class="relative mx-auto grid max-w-6xl gap-16 px-6 py-24 md:grid-cols-[1.15fr_0.85fr] md:py-32">
         <div>
-          <p class="section-index">00 / Source control for agents.</p>
+          <p class="section-index">00 / CLI and MCP source control for agents.</p>
           <h1
             class="mt-6 max-w-3xl text-5xl font-semibold leading-[0.98] tracking-tight md:text-7xl"
           >
@@ -231,7 +230,7 @@ onMounted(() => {
             Gets it done.
           </p>
           <p class="mt-8 max-w-2xl text-lg leading-relaxed text-muted-strong md:text-xl">
-            BitterGit is git hosting for agent fleets. It keeps the protocol developers
+            BitterGit is git hosting for agent fleets and agent-run work loops. It keeps the protocol developers
             already trust, then stamps every agent commit with the run that made it,
             the wake that asked for it, and the verification that cleared it.
           </p>
