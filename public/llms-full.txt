@@ -46,8 +46,11 @@ repository storage, account integration, and source-custody verification gates.
 Bitter's own fleet is tenant zero. External accounts are request-only.
 
 The public marketing site is live and Grid-verified at the release reported by
-`https://bittergit.com/up`. The marketing repository is still private on GitHub,
-so this source shape is public-ready but not yet publicly visible as a repo.
+`https://bittergit.com/up`.
+
+Public source repository: `https://github.com/sheetgenius/bittergit-marketing`.
+It owns website source, Markdown mirrors, crawler files, smoke tests, and
+deployment-boundary docs. It does not own the product Git remote/API service.
 
 Access requests start in BitterDesk at `https://bitterdesk.com/`. There is no
 self-serve signup queue or static form endpoint on the marketing site.
@@ -80,6 +83,10 @@ Known caveats:
 - Full AI context: https://bittergit.com/llms-full.txt
 - Health: https://bittergit.com/up
 - Access requests and support: https://bitterdesk.com/
+- Public source repository: https://github.com/sheetgenius/bittergit-marketing
+- Changelog: https://github.com/sheetgenius/bittergit-marketing/blob/main/CHANGELOG.md
+- Contributing: https://github.com/sheetgenius/bittergit-marketing/blob/main/CONTRIBUTING.md
+- Security and public boundary: https://github.com/sheetgenius/bittergit-marketing/blob/main/SECURITY.md
 
 ## Repository Commands
 

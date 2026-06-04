@@ -49,6 +49,11 @@ Use this section for changes committed after the latest dated entry.
 - Removed workstation path, host name, and deploy-root details from the tracked
   receipt so the repo stays suitable for future public visibility.
 
+### Repository Metadata
+
+- Added public source links to the site footer, README, Markdown mirror,
+  `llms.txt`, `llms-full.txt`, and JSON-LD metadata.
+
 ## 2026-06-04
 
 ### Product Context

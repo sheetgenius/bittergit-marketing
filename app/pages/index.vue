@@ -5,6 +5,25 @@ useSeoMeta({
     'BitterGit is Git-compatible source custody for agent runs, with signed run provenance, run-level review, and BitterGrid verification receipts.',
 })
 
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'BitterGit',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Web',
+        url: 'https://bittergit.com/',
+        sameAs: ['https://github.com/sheetgenius/bittergit-marketing'],
+        description:
+          'Git-compatible source custody for agent runs, with signed run provenance, run-level review, and BitterGrid verification receipts.',
+      }),
+    },
+  ],
+})
+
 const stream = [
   {
     runId: 'run_4f2a',
@@ -551,6 +570,7 @@ Signature: ed25519:<span class="cli-block__comment">…</span></pre>
           <a href="#inside" class="transition hover:text-fg">Spec</a>
           <a href="#access" class="transition hover:text-fg">Request access</a>
           <a href="https://bitterdesk.com" class="transition hover:text-fg">Support</a>
+          <a href="https://github.com/sheetgenius/bittergit-marketing" class="transition hover:text-fg">Source</a>
         </div>
       </div>
     </footer>

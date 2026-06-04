@@ -46,15 +46,15 @@ public marketing site is live and Grid-verified at the release reported by
 
 Access requests start in BitterDesk: https://bitterdesk.com/
 
+Public source repository: https://github.com/sheetgenius/bittergit-marketing
+
 ## Public Links
 
 - Website: https://bittergit.com/
+- Public source repository: https://github.com/sheetgenius/bittergit-marketing
 - Health/release identity: https://bittergit.com/up
 - Access requests and support: https://bitterdesk.com/
 - AI index: https://bittergit.com/llms.txt
 - Full AI context: https://bittergit.com/llms-full.txt
 - Bitter: https://bitter.sh/
 - BitterGrid: https://bittergrid.com/
-
-The GitHub repository for this marketing site is still private. Do not cite it
-as a public repository until visibility changes intentionally.

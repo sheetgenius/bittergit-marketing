@@ -4,10 +4,9 @@
 
 This repo owns the public marketing site for `bittergit.com`.
 
-The repo is currently private on GitHub. Treat it as intended public source:
+The repo is public on GitHub. Treat every committed file as public source:
 avoid private context, secrets, internal runbooks, provider payloads, customer
-data, and generated output. Do not claim the repository is already public until
-visibility is changed intentionally.
+data, and generated output.
 
 The product implementation lives in a separate BitterGit service repository,
 not this marketing repo. Use the service repository for source-custody

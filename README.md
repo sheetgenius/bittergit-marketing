@@ -52,8 +52,9 @@ Current public status:
 This repository contains the public BitterGit marketing site at
 [bittergit.com](https://bittergit.com/).
 
-It is currently private on GitHub, so this pass makes the source shape ready for
-public release without claiming the repository is already public.
+The GitHub repository is public and exists to make the marketing surface,
+Markdown mirrors, crawler files, deployment boundary, and verification posture
+inspectable.
 
 This repository owns:
 
@@ -74,6 +75,8 @@ in the separate BitterGit service repository.
 ## Links
 
 - BitterGit website: [bittergit.com](https://bittergit.com/)
+- Source repository:
+  [github.com/sheetgenius/bittergit-marketing](https://github.com/sheetgenius/bittergit-marketing)
 - Health/release identity: [bittergit.com/up](https://bittergit.com/up)
 - Access requests and support: [bitterdesk.com](https://bitterdesk.com/)
 - Markdown page mirror: [index.md](https://bittergit.com/index.md)
@@ -85,9 +88,6 @@ in the separate BitterGit service repository.
 - Security and public boundary: [SECURITY.md](SECURITY.md)
 - Bitter: [bitter.sh](https://bitter.sh/)
 - BitterGrid: [bittergrid.com](https://bittergrid.com/)
-
-Do not advertise this GitHub repository as public until repository visibility is
-changed intentionally.
 
 ## Deployment
 
@@ -146,10 +146,10 @@ starts its own local static server when no `PLAYWRIGHT_BASE_URL` is supplied.
 
 ## Public Context
 
-This repository is intended to become a public source artifact for the
-`bittergit.com` marketing surface. README text, page copy, metadata, sitemap
-entries, Markdown alternates, and public links should preserve durable context
-for humans, search engines, and AI systems that index public repositories.
+This repository is a public source artifact for the `bittergit.com` marketing
+surface. README text, page copy, metadata, sitemap entries, Markdown alternates,
+and public links should preserve durable context for humans, search engines,
+and AI systems that index public repositories.
 
 When a page claim changes, update the matching Markdown twin, `public/llms.txt`,
 `public/llms-full.txt`, metadata, sitemap, smoke tests, and changelog in the

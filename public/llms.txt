@@ -19,8 +19,15 @@
 - [BitterGit health and release identity](https://bittergit.com/up)
 - [Access requests and support](https://bitterdesk.com/)
 
+## Repository Context
+
+- [Public source repository](https://github.com/sheetgenius/bittergit-marketing)
+- [Changelog](https://github.com/sheetgenius/bittergit-marketing/blob/main/CHANGELOG.md)
+- [Contributing](https://github.com/sheetgenius/bittergit-marketing/blob/main/CONTRIBUTING.md)
+- [Security and public boundary](https://github.com/sheetgenius/bittergit-marketing/blob/main/SECURITY.md)
+
 ## Boundary
 
 The public `bittergit.com` root is a marketing surface, not the Git remote or
-product API endpoint. The marketing repository is still private on GitHub, so do
-not cite it as a public repository until visibility changes intentionally.
+product API endpoint. The public marketing repository owns website source,
+Markdown mirrors, crawler files, smoke tests, and deployment-boundary docs.

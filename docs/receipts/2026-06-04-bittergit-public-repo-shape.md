@@ -33,7 +33,7 @@ and live route/header verification after deployment.
 - Radicchio site id: `102`
 - Radicchio hostname: `bittergit.com`
 
-Known caveats:
+Known caveats at initial preflight:
 
 - GitHub reports `sheetgenius/bittergit-marketing` as private.
 - Grid customer app ownership is not applicable to this platform-style service.
@@ -79,8 +79,8 @@ WakePacket -> AgentRun -> Commit -> RunTrailers -> RunBundle -> GridReceipt -> A
     request-access CTA, Grid ready/passed state.
   - source-proven in this pass: README, AGENTS, changelog, public Markdown,
     llms files, sitemap, canonical/alternate metadata, smoke coverage.
-  - private/restricted: GitHub repository visibility, app ownership proof,
-    Radicchio token status, private product implementation.
+  - private/restricted at initial preflight: GitHub repository visibility, app
+    ownership proof, Radicchio token status, private product implementation.
   - future/remove/soften: public Git remote/API at `bittergit.com`, SSH Git,
     public repo browsing, live header parity until deployed and verified.
 - CTA truth: request access only; Bitter fleet is tenant zero.
@@ -238,7 +238,7 @@ This verification covers:
   `X-Content-Type-Options`, `X-Frame-Options: SAMEORIGIN`,
   `Referrer-Policy`, and `Permissions-Policy`.
 
-Remaining live caveats:
+Remaining live caveats after the first live verification:
 
 - GitHub repo visibility is still private; do not call the repository public
   until visibility is changed intentionally.
@@ -265,8 +265,25 @@ stale public context:
   endpoint, which returns `404` on the live Radicchio host.
 - `Scripts/workcell-verify` now asserts the BitterDesk access path rather than
   the removed form.
-- GitHub visibility is still private in this pass, so source links remain
-  withheld until repository visibility changes intentionally.
+- The final publication pass adds public source links to the footer, README,
+  Markdown mirror, `llms.txt`, `llms-full.txt`, and JSON-LD metadata. GitHub
+  visibility should be changed intentionally as part of that same deployment
+  receipt, not ahead of source-link verification.
+
+## Public Visibility Pass
+
+This pass is intended to change `sheetgenius/bittergit-marketing` from private
+to public after source-link verification. Once the visibility flip is confirmed,
+current publication truth is:
+
+- public source repository:
+  `https://github.com/sheetgenius/bittergit-marketing`;
+- live source link coverage: footer, README, Markdown mirror, `llms.txt`,
+  `llms-full.txt`, and JSON-LD metadata;
+- remaining caveats: Radicchio serves `/index.md` as
+  `application/octet-stream`, does not emit canonical HTTP `Link` headers for
+  Markdown alternates, and the public `bittergit.com` root is not the product
+  Git remote/API endpoint.
 
 ## Reviews Used
 

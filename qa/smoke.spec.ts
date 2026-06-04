@@ -27,6 +27,16 @@ test('homepage exposes meta description and og tags', async ({ page }) => {
 
   const markdownAlternate = page.locator('link[rel="alternate"][type="text/markdown"]')
   await expect(markdownAlternate).toHaveAttribute('href', 'https://bittergit.com/index.md')
+
+  const jsonLd = await page.locator('script[type="application/ld+json"]').textContent()
+  expect(jsonLd).toContain('https://github.com/sheetgenius/bittergit-marketing')
+})
+
+test('homepage exposes the public source repository', async ({ page }) => {
+  await page.goto('/')
+  await expect(
+    page.locator('footer a[href="https://github.com/sheetgenius/bittergit-marketing"]'),
+  ).toBeVisible()
 })
 
 test('health endpoint reports the deploy receipt shape', async ({ request }) => {
@@ -105,9 +115,9 @@ test('public discovery files are reachable', async ({ request }) => {
   const expectedText = new Map([
     ['/robots.txt', 'Sitemap: https://bittergit.com/sitemap.xml'],
     ['/sitemap.xml', 'https://bittergit.com/index.md'],
-    ['/llms.txt', 'BitterGit'],
-    ['/llms-full.txt', 'BitterGit'],
-    ['/index.md', 'BitterGit'],
+    ['/llms.txt', 'https://github.com/sheetgenius/bittergit-marketing'],
+    ['/llms-full.txt', 'https://github.com/sheetgenius/bittergit-marketing'],
+    ['/index.md', 'https://github.com/sheetgenius/bittergit-marketing'],
   ])
 
   for (const [route, text] of expectedText.entries()) {
