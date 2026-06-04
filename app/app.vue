@@ -1,4 +1,4 @@
 <template>
-  <NuxtLoadingIndicator color="#1f7a4a" />
+  <NuxtLoadingIndicator color="#a9b8ff" />
   <NuxtPage />
 </template>

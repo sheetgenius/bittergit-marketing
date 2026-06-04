@@ -49,6 +49,9 @@ The public marketing site is live and Grid-verified at the release reported by
 `https://bittergit.com/up`. The marketing repository is still private on GitHub,
 so this source shape is public-ready but not yet publicly visible as a repo.
 
+Access requests start in BitterDesk at `https://bitterdesk.com/`. There is no
+self-serve signup queue or static form endpoint on the marketing site.
+
 ## Deployment Facts
 
 - service key: `bittergit.com`
@@ -76,6 +79,7 @@ Known caveats:
 - AI index: https://bittergit.com/llms.txt
 - Full AI context: https://bittergit.com/llms-full.txt
 - Health: https://bittergit.com/up
+- Access requests and support: https://bitterdesk.com/
 
 ## Repository Commands
 

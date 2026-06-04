@@ -55,7 +55,7 @@ test('homepage hero heading is visible', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'See first run' })).toBeVisible()
 })
 
-test('homepage CTA path reaches the first-run contract and access form', async ({ page }) => {
+test('homepage CTA path reaches the first-run contract and access path', async ({ page }) => {
   await page.goto('/')
 
   await page.getByRole('link', { name: 'See first run' }).click()
@@ -65,11 +65,10 @@ test('homepage CTA path reaches the first-run contract and access form', async (
   await page.getByRole('link', { name: 'Request early access' }).click()
   await expect(page).toHaveURL(/#access$/)
 
-  await page.locator('input[name="email"]').fill('dev@example.com')
-  await page
-    .locator('textarea[name="context"]')
-    .fill('We want run-level receipts for agent commits across several repos.')
-  await expect(page.locator('input[name="email"]')).toHaveValue('dev@example.com')
+  const supportLink = page.getByRole('link', { name: 'Start request in BitterDesk' })
+  await expect(supportLink).toBeVisible()
+  await expect(supportLink).toHaveAttribute('href', 'https://bitterdesk.com')
+  await expect(page.getByText('There is no self-serve signup queue or static form endpoint')).toBeVisible()
 })
 
 test('theme toggle changes the document theme', async ({ page }) => {

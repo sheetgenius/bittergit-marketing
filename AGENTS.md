@@ -9,9 +9,10 @@ avoid private context, secrets, internal runbooks, provider payloads, customer
 data, and generated output. Do not claim the repository is already public until
 visibility is changed intentionally.
 
-The product implementation lives in `/Users/c3po/co/bittergit`, not this
-marketing repo. Use that service repo for source-custody implementation details,
-Git remote behavior, repo storage, account integration, and verification gates.
+The product implementation lives in a separate BitterGit service repository,
+not this marketing repo. Use the service repository for source-custody
+implementation details, Git remote behavior, repo storage, account integration,
+and verification gates.
 
 The shared public marketing repository standard lives in Factory at
 `docs/policy/public-marketing-repositories.md`.

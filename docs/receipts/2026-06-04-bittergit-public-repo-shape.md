@@ -2,7 +2,7 @@
 
 ## Status
 
-- Local repo: `/Users/c3po/co/bittergit-marketing`
+- Repository: `sheetgenius/bittergit-marketing`
 - Status: `source-shaped`
 - Branch: `main`
 - Starting source SHA: `a99511f197ef2b44cb2572daa3a706410782fa9a`
@@ -21,15 +21,13 @@ and live route/header verification after deployment.
 - Grid service id: `30`
 - service key: `bittergit.com`
 - service name: `BitterGit`
-- host: `bittergrid-01`
 - state: `running`
 - health: `healthy`
 - deploy status: `ready`
 - verification status: `passed`
 - health path: `/up`
 - health URL: `https://bittergit.com/up`
-- source repo: `git@github.com:sheetgenius/bittergit-marketing.git`
-- deploy root: `/opt/factory/repos/bittergit-marketing`
+- GitHub source: `sheetgenius/bittergit-marketing`
 - deployment path: GitHub source event -> BitterGrid build/deploy ->
   Radicchio/static site
 - Radicchio site id: `102`
@@ -254,13 +252,17 @@ Remaining live caveats:
 This follow-up pass keeps BitterGit publication-gated while removing avoidable
 stale public context:
 
-- `bitter grid services source check bittergit.com` reported `in_sync` with
-  remote, desired, and release all at
-  `85e9f4eda7c5d0809feb429425e8ca153f29acd9`.
+- After deploying this follow-up source, `bitter grid services source check
+  bittergit.com` reported `in_sync` with remote, desired, and release all at
+  `bf1bf859ff1a6af121d65efb3cd9844fdc3b0e56`.
 - The live `/up` payload is the authoritative active release identity; README,
   AGENTS, and AI context no longer pin an older release SHA.
 - The page background no longer carries leftover green glow tokens. The ambient
   accents now use BitterGit's indigo source-custody palette.
+- The Nuxt loading indicator now uses the same indigo accent instead of the
+  earlier green value.
+- The early-access CTA now routes to BitterDesk instead of a static `/__submit`
+  endpoint, which returns `404` on the live Radicchio host.
 - GitHub visibility is still private in this pass, so source links remain
   withheld until repository visibility changes intentionally.
 
@@ -286,6 +288,9 @@ Opus 4.8 Max grounding review:
 - Attempted through local Claude CLI with a compact grounding packet.
 - Blocked: the command produced no output for more than a minute and was killed;
   the process exited with code `143`.
+- Retried during the second-round cleanup. The first retry exceeded a
+  low-dollar print budget; the second bounded retry produced no output for more
+  than a minute and was terminated.
 
 ## Next-Repo Lesson
 

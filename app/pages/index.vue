@@ -512,47 +512,22 @@ Signature: ed25519:<span class="cli-block__comment">…</span></pre>
           Tell us what you'd want to host here, and which loop you'd point at it.
         </p>
         <p class="mt-3 max-w-2xl text-lg leading-relaxed text-muted">
-          Invitations go out in waves. Replies come from a human.
+          Invitations go out in waves. There is no self-serve signup queue or
+          static form endpoint; access requests start in BitterDesk.
         </p>
 
-        <form
-          method="POST"
-          action="/__submit"
-          class="mt-14 grid gap-4 border-t border-line pt-6 md:max-w-2xl"
-        >
-          <input type="hidden" name="product" value="bittergit-early-access" />
-
-          <label class="grid gap-2">
-            <span class="font-mono text-xs uppercase tracking-[0.18em] text-muted">Email</span>
-            <input
-              type="email"
-              name="email"
-              required
-              autocomplete="email"
-              class="field-input"
-              placeholder="you@company.com"
-            />
-          </label>
-
-          <label class="grid gap-2">
-            <span class="font-mono text-xs uppercase tracking-[0.18em] text-muted"
-              >What would you host on BitterGit?</span
-            >
-            <textarea
-              name="context"
-              rows="4"
-              class="field-input"
-              placeholder="Example: We run a small agent fleet that commits across four repos a day. We want to audit what each run did without clicking through forty PRs."
-            ></textarea>
-          </label>
-
+        <div class="mt-14 grid gap-5 border-t border-line pt-6 md:max-w-2xl">
+          <p class="text-base leading-relaxed text-muted-strong">
+            Open a BitterDesk request with the repositories you want to protect,
+            the agent loop you want to wrap, and the receipt shape you need.
+          </p>
           <div class="flex flex-wrap items-center gap-3 pt-2">
-            <button type="submit" class="btn-primary">Request access</button>
+            <a href="https://bitterdesk.com" class="btn-primary">Start request in BitterDesk</a>
             <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
               Every change has a run, a reason, and a receipt.
             </span>
           </div>
-        </form>
+        </div>
       </div>
     </section>
 
@@ -575,6 +550,7 @@ Signature: ed25519:<span class="cli-block__comment">…</span></pre>
           <a href="#how" class="transition hover:text-fg">Design</a>
           <a href="#inside" class="transition hover:text-fg">Spec</a>
           <a href="#access" class="transition hover:text-fg">Request access</a>
+          <a href="https://bitterdesk.com" class="transition hover:text-fg">Support</a>
         </div>
       </div>
     </footer>

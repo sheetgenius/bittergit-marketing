@@ -75,6 +75,7 @@ in the separate BitterGit service repository.
 
 - BitterGit website: [bittergit.com](https://bittergit.com/)
 - Health/release identity: [bittergit.com/up](https://bittergit.com/up)
+- Access requests and support: [bitterdesk.com](https://bitterdesk.com/)
 - Markdown page mirror: [index.md](https://bittergit.com/index.md)
 - AI crawler entry points:
   [llms.txt](https://bittergit.com/llms.txt),

@@ -44,10 +44,13 @@ Bitter's own fleet is tenant zero. External accounts are request-only. The
 public marketing site is live and Grid-verified at the release reported by
 `https://bittergit.com/up`.
 
+Access requests start in BitterDesk: https://bitterdesk.com/
+
 ## Public Links
 
 - Website: https://bittergit.com/
 - Health/release identity: https://bittergit.com/up
+- Access requests and support: https://bitterdesk.com/
 - AI index: https://bittergit.com/llms.txt
 - Full AI context: https://bittergit.com/llms-full.txt
 - Bitter: https://bitter.sh/

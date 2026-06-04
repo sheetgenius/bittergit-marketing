@@ -38,6 +38,14 @@ Use this section for changes committed after the latest dated entry.
 
 - Removed leftover green page-background glows from the BitterGit palette and
   aligned them with the indigo source-custody accent.
+- Aligned the Nuxt loading indicator with the same indigo accent.
+- Replaced the dead static early-access form with a truthful BitterDesk request
+  path and propagated the access boundary through Markdown and AI files.
+
+### Public Hygiene
+
+- Removed workstation path, host name, and deploy-root details from the tracked
+  receipt so the repo stays suitable for future public visibility.
 
 ## 2026-06-04
 
