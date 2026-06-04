@@ -169,6 +169,40 @@ Observed: <missing>
 The public Markdown/LLM routes also remain live `404` until the new source is
 deployed through Grid.
 
+## Follow-Up Deploy Attempt
+
+After the source-shaped commit was pushed, Grid accepted
+`sheetgenius/bittergit-marketing@2a194884ac5ce569ff7eca23d714942278e64509`:
+
+- build operation `13202` succeeded;
+- deployment operation `13204` completed;
+- deployment `2530` reported `ready`;
+- Grid verification reported `passed`;
+- `bitter grid services source check bittergit.com` reported remote, desired,
+  and release all at `2a194884ac5ce569ff7eca23d714942278e64509`.
+
+That was not enough to call the site live-current. The operation log for
+`13204` showed the Radicchio deploy response contained:
+
+```text
+File extension not allowed: .md (index.md)
+```
+
+The public edge still served the old `/up` release identity
+`a99511f197ef2b44cb2572daa3a706410782fa9a`, and `/sitemap.xml`, `/llms.txt`,
+`/llms-full.txt`, and `/index.md` still returned 404. Treat this as a
+Radicchio publish rejection plus false-positive Grid/Radicchio receipt, not as
+a live-verified deployment.
+
+The repo-local deploy helper now aborts when Radicchio returns a deploy error,
+so future deploy attempts fail loudly instead of wrapping the error in a
+`status: deployed` payload.
+
+Remaining deployment dependency:
+
+- Radicchio backend must support `.md` static deploy files and be live before
+  this site can publish the BitterClip-style Markdown twin.
+
 ## Reviews Used
 
 X-High deploy/boundary reviewer:

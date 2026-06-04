@@ -23,6 +23,12 @@ Preferred categories:
 
 Use this section for changes committed after the latest dated entry.
 
+### Deployment
+
+- Made the Radicchio deploy helper fail when Radicchio returns a deploy error,
+  preventing Grid/Radicchio false-positive deploy receipts from being treated as
+  live verification.
+
 ## 2026-06-04
 
 ### Product Context
