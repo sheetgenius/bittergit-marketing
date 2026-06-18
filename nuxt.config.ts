@@ -1,5 +1,11 @@
 import tailwindcss from '@tailwindcss/vite'
 
+const gaMeasurementId = 'G-P155YY6FGZ'
+const gaConfigScript = `window.dataLayer = window.dataLayer || [];
+function gtag(){window.dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${gaMeasurementId}');`
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
@@ -63,6 +69,17 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
       ],
       script: [
+        {
+          key: 'ga4-loader',
+          src: `https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`,
+          async: true,
+          tagPosition: 'head',
+        },
+        {
+          key: 'ga4-config',
+          tagPosition: 'head',
+          innerHTML: gaConfigScript,
+        },
         {
           key: 'theme-init',
           tagPosition: 'head',
