@@ -1,25 +1,41 @@
 # BitterGit
 
-[BitterGit](https://bittergit.com/) is Git-compatible source custody for agent
-runs, with signed run provenance, run-level review, and BitterGrid verification
-receipts.
+[BitterGit](https://bittergit.com/) is Git-compatible source custody for AI
+coding agents. It gives each Bitter app a real repository without making a
+GitHub account part of the setup.
 
-It is built for operators and teams that have agents committing across multiple
-repositories and need to know which run made what, what verified, what failed,
-and what can be accepted or reverted without treating a bot account as the unit
-of review.
+It keeps the Git semantics developers already trust. The broader
+[Bitter](https://bitter.sh/) product is designed to connect each change to the
+agent run, verification, and decision around it. People who already use GitHub
+or another provider can connect it when useful; people who do not can start
+without one.
+
+## Why It Exists
+
+Bitter is meant to remove the obstacles between an idea and a capable coding
+agent getting to work. For someone who does not already use GitHub, leaving
+that flow to create another account and connect it before the first repository
+exists is an avoidable setup step.
+
+BitterGit makes the repository part of the prepared environment. In hosted
+Bitter, an app is designed to start with ordinary Git, recoverable history, and
+scoped agent access in place. Its source remains cloneable and exportable with
+standard tools, while GitHub and other providers stay available as optional
+external sources or mirrors rather than prerequisites.
 
 ## Place In Bitter
 
-[Bitter](https://bitter.sh/) is an agent-operable software environment. It gives
-AI agents persistent workspaces where repositories, credentials, hosting, email,
-tests, deploys, logs, checks, and work history are connected.
+[Bitter](https://bitter.sh/) is a prepared workspace and CLI for agentic coding.
+It gives AI agents a place where repositories, credentials, hosting, tests,
+deploys, logs, customer channels, and work history are connected. The CLI can
+be used locally without an account; hosted workspaces are currently opening by
+invitation.
 
-BitterGit owns the source-custody part of that environment:
+At full integration, the components have these roles:
 
+- `BitterGit` gives the app a Git-compatible source home and preserves its
+  history, commit provenance, and source-linked workflow metadata.
 - `Bitter CLI` stamps and signs run provenance around ordinary Git operations.
-- `BitterGit` preserves repositories, source history, commit provenance, and
-  source-linked workflow metadata.
 - `BitterGrid` builds, deploys, verifies, and records runtime receipts.
 - `BitterLog` is the evidence surface that can carry source-custody events into
   future wake packets.
@@ -27,23 +43,38 @@ BitterGit owns the source-custody part of that environment:
 BitterGit is not a GitHub clone, project tracker, social network, CI system,
 deploy executor, account/billing layer, or secret-value store.
 
-## Product Model
+The [open-source BitterGit service](https://github.com/sheetgenius/bittergit)
+is the Apache-2.0 alpha that can be run today. It provides ordinary Git smart
+HTTP, scoped access, history, checkpoints, restore and export, imports, mirrors,
+and source-linked receipts. The wider account, workspace, provenance,
+verification, and operations model described below is the hosted Bitter
+direction, not a claim that every component ships in the open-source server.
 
-The public product loop is:
+## Hosted Product Direction
+
+The setup path is deliberately short:
+
+```text
+Idea -> Bitter app -> BitterGit repository -> Agent workspace -> First commit
+```
+
+Once agents are working, the intended source-custody loop is:
 
 ```text
 WakePacket -> AgentRun -> Commit -> RunTrailers -> RunBundle -> GridReceipt -> Accept/RevertDecision -> SourceHistory
 ```
 
-The core idea is that the run, not the bot account or pull request, becomes the
+The design is for the run, not the bot account or pull request, to become the
 review unit. A single agent run may touch one repository or several. BitterGit
 keeps the ordinary Git semantics while attaching enough provenance and receipt
 context for a human or agent to inspect the whole run.
 
 Current public status:
 
-- Bitter's own fleet is tenant zero.
-- External accounts are request-only.
+- The Apache-2.0 BitterGit alpha is public and can be run locally today.
+- Bitter is proving the hosted integration on its own services first.
+- The Bitter CLI can be installed and used locally without an account.
+- Hosted Bitter accounts are opening by invitation.
 - The public `bittergit.com` root is a marketing surface, not the Git remote or
   product API endpoint.
 
@@ -70,15 +101,21 @@ This repository owns:
 It does not own the BitterGit source-custody implementation, Git remotes,
 repository storage, account identity, billing, secret values, Grid deployment
 execution, or private support/debug material. The product implementation lives
-in the separate BitterGit service repository.
+in the separate
+[BitterGit service repository](https://github.com/sheetgenius/bittergit).
 
 ## Links
 
+- Bitter workspace and CLI: [bitter.sh](https://bitter.sh/)
+- Request hosted Bitter access:
+  [bitter.sh/signup](https://bitter.sh/signup/)
 - BitterGit website: [bittergit.com](https://bittergit.com/)
-- Source repository:
+- Open-source BitterGit service:
+  [github.com/sheetgenius/bittergit](https://github.com/sheetgenius/bittergit)
+- This website's source:
   [github.com/sheetgenius/bittergit-marketing](https://github.com/sheetgenius/bittergit-marketing)
 - Health/release identity: [bittergit.com/up](https://bittergit.com/up)
-- Access requests and support: [bitterdesk.com](https://bitterdesk.com/)
+- Support: [bitterdesk.com](https://bitterdesk.com/)
 - Markdown page mirror: [index.md](https://bittergit.com/index.md)
 - AI crawler entry points:
   [llms.txt](https://bittergit.com/llms.txt),
@@ -86,7 +123,6 @@ in the separate BitterGit service repository.
 - Public change history: [CHANGELOG.md](CHANGELOG.md)
 - Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
 - Security and public boundary: [SECURITY.md](SECURITY.md)
-- Bitter: [bitter.sh](https://bitter.sh/)
 - BitterGrid: [bittergrid.com](https://bittergrid.com/)
 
 ## Deployment
