@@ -2,35 +2,54 @@
 
 ## Product Sentence
 
-BitterGit is Git-compatible source custody for agent runs, with signed run
-provenance, run-level review, and BitterGrid verification receipts.
+BitterGit is an open-source, self-hosted Git service for AI coding agents. It
+gives every app an ordinary Git repository from the beginning without making a
+GitHub account part of setup.
 
-## User And Job
+## Motivation
 
-BitterGit is built for operators and teams whose agents commit across multiple
-repositories. They need to know which run made what, what verified, what failed,
-and what can be accepted or reverted without treating a bot account as the unit
-of review.
+Bitter is meant to remove the setup between an idea and a capable coding agent
+getting to work. For someone who does not already use GitHub, creating and
+connecting another account before the first repository exists is an avoidable
+obstacle.
 
-## Object Loop
+BitterGit keeps source compatible with standard Git tools. GitHub and other
+providers can be imported or connected later as external sources or mirrors;
+they are options, not prerequisites.
 
-```text
-WakePacket -> AgentRun -> Commit -> RunTrailers -> RunBundle -> GridReceipt -> Accept/RevertDecision -> SourceHistory
-```
+## Open-Source Alpha
 
-The source-custody record should connect the wake packet that asked for work,
-the agent run that did the work, the commits it produced, the signed trailers on
-those commits, the run bundle that groups them, the BitterGrid receipt that
-verified them, and the human or agent decision that accepted, reverted, or
-superseded the change.
+The Apache-2.0 server available at
+`https://github.com/sheetgenius/bittergit` provides:
+
+- Git smart HTTP through the system `git-http-backend`
+- repository-scoped read, write, and ref controls
+- ref events, diff, checkpoints, restore, and export
+- conservative folder, zip, and Git import review
+- optional external mirrors
+- source-linked records tied to exact commits
+- optional account, workcell, agent, secret, and deploy integration contracts
+
+The current alpha can be run locally today. It is not yet a hardened public
+multi-tenant forge. Keep the demo path on loopback, maintain independent
+backups, and read the public security model before a network deployment.
 
 ## Place In Bitter
 
-Bitter CLI stamps and signs run provenance around ordinary Git operations.
-BitterGit preserves repositories, source history, commit provenance, and
-source-linked workflow metadata. BitterGrid builds, deploys, verifies, and
-records runtime receipts. BitterLog can carry source-custody evidence into
-future wake packets.
+Bitter is a prepared workspace and CLI for agentic coding. BitterGit owns the
+source-custody layer: the repository, scoped agent access, recoverable history,
+and exact commit behind later work.
+
+The wider hosted direction is:
+
+```text
+Idea -> Bitter app -> BitterGit repository -> Agent workspace -> First commit
+```
+
+Hosted Bitter is designed to connect source custody to account-backed setup,
+prepared workspaces, agent-run provenance, BitterGrid verification, deploys,
+logs, support, and project history. Those wider services are not bundled in the
+open-source server.
 
 ## Boundary
 
@@ -38,40 +57,15 @@ BitterGit is not a GitHub clone, project tracker, social network, CI system,
 deploy executor, account/billing layer, or secret-value store.
 
 The public `bittergit.com` root is a marketing surface, not the Git remote or
-product API endpoint. The product service repository owns Git remotes,
-repository storage, account integration, and source-custody verification gates.
+product API endpoint. The open-source service repository owns Git remotes,
+repository storage, source-custody behavior, documentation, and verification
+gates. The website repository owns the public site and its deployment wrapper.
 
 ## Current Status
 
-Bitter's own fleet is tenant zero. External accounts are request-only.
-
-The public marketing site is live and Grid-verified at the release reported by
-`https://bittergit.com/up`.
-
-Public source repository: `https://github.com/sheetgenius/bittergit-marketing`.
-It owns website source, Markdown mirrors, crawler files, smoke tests, and
-deployment-boundary docs. It does not own the product Git remote/API service.
-
-Access requests start in BitterDesk at `https://bitterdesk.com/`. There is no
-self-serve signup queue or static form endpoint on the marketing site.
-
-## Deployment Facts
-
-- service key: `bittergit.com`
-- Grid service id: `30`
-- active verified release: reported by `https://bittergit.com/up`
-- health path: `/up`
-- Radicchio site id: `102`
-- publish directory: `.output/public`
-- deployment path: GitHub source event -> BitterGrid build/deploy ->
-  Radicchio/static site
-
-Known caveats:
-
-- Grid customer app ownership is not applicable to this platform-style service.
-- Grid edge binding is untracked even though public verification passes.
-- Radicchio serves `/index.md` as `application/octet-stream` and does not emit
-  canonical HTTP `Link` headers for Markdown alternates.
+- The open-source BitterGit alpha is public and runnable locally today.
+- The integrated Bitter product can be experienced at https://bitter.sh/.
+- Live website release: reported by https://bittergit.com/up
 
 ## Public Routes
 
@@ -82,16 +76,26 @@ Known caveats:
 - AI index: https://bittergit.com/llms.txt
 - Full AI context: https://bittergit.com/llms-full.txt
 - Health: https://bittergit.com/up
-- Access requests and support: https://bitterdesk.com/
-- Public source repository: https://github.com/sheetgenius/bittergit-marketing
+- Open-source BitterGit service: https://github.com/sheetgenius/bittergit
+- Quick start: https://github.com/sheetgenius/bittergit#quick-start
+- Website source: https://github.com/sheetgenius/bittergit-marketing
+- Experience BitterGit in Bitter: https://bitter.sh/
 - Changelog: https://github.com/sheetgenius/bittergit-marketing/blob/main/CHANGELOG.md
 - Contributing: https://github.com/sheetgenius/bittergit-marketing/blob/main/CONTRIBUTING.md
 - Security and public boundary: https://github.com/sheetgenius/bittergit-marketing/blob/main/SECURITY.md
 
-## Repository Commands
+## Website Deployment Facts
+
+- service key: `bittergit.com`
+- active verified release: reported by `https://bittergit.com/up`
+- health path: `/up`
+- publish directory: `.output/public`
+- deployment path: GitHub source event -> BitterGrid build/deploy -> Radicchio/static site
+
+The website repository can be generated and checked with:
 
 ```bash
-npm install
+npm ci
 npm run generate
 npm run qa:smoke
 npm run test:headers

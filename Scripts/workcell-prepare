@@ -82,7 +82,7 @@ scripts = package.get("scripts", {})
 root_package = lock.get("packages", {}).get("", {})
 lock_versions = {
     name: lock.get("packages", {}).get(f"node_modules/{name}", {}).get("version")
-    for name in ["nuxt", "nitropack", "vite", "devalue", "simple-git", "ws", "postcss", "defu", "unhead"]
+    for name in ["nuxt", "nitropack", "vite", "devalue", "simple-git", "ws", "postcss", "defu", "unhead", "brace-expansion"]
 }
 
 checks = [
@@ -98,12 +98,12 @@ checks = [
     },
     {
         "name": "lockfile_versions",
-        "result": "ok" if lock_versions.get("nuxt") == "4.4.6" and lock_versions.get("nitropack") == "2.13.4" and lock_versions.get("vite") == "7.3.3" and lock_versions.get("devalue") == "5.8.1" and lock_versions.get("simple-git") == "3.36.0" and lock_versions.get("ws") in (None, "8.20.1") and lock_versions.get("postcss") == "8.5.14" and lock_versions.get("defu") == "6.1.7" and lock_versions.get("unhead") == "2.1.15" else "failed",
+        "result": "ok" if lock_versions.get("nuxt") == "4.5.2" and lock_versions.get("nitropack") == "2.13.4" and lock_versions.get("vite") == "8.2.1" and lock_versions.get("devalue") == "5.9.0" and lock_versions.get("simple-git") == "3.36.0" and lock_versions.get("ws") == "8.21.3" and lock_versions.get("postcss") == "8.5.26" and lock_versions.get("defu") == "6.1.7" and lock_versions.get("unhead") == "3.3.2" and lock_versions.get("brace-expansion") == "5.0.9" else "failed",
         "versions": lock_versions,
     },
     {
         "name": "lockfile_root",
-        "result": "ok" if root_package.get("name") == "bittergit-marketing" and root_package.get("dependencies", {}).get("nuxt") == "4.4.6" and root_package.get("dependencies", {}).get("vue-router") == "5.0.7" else "failed",
+        "result": "ok" if root_package.get("name") == "bittergit-marketing" and root_package.get("dependencies", {}).get("nuxt") == "4.5.2" and root_package.get("dependencies", {}).get("vue") == "3.5.41" and root_package.get("dependencies", {}).get("vue-router") == "5.2.0" else "failed",
     },
     {
         "name": "radicchio_manifest",
@@ -129,11 +129,11 @@ checks = [
     },
     {
         "name": "public_smoke_scope",
-        "result": "ok" if "Git-compatible source custody" in smoke and "BitterGit" in smoke and "Request access" in smoke and "bittergit.com" in smoke else "failed",
+        "result": "ok" if "open-source, self-hosted Git service" in smoke and "View BitterGit source on GitHub" in smoke and "Experience it in Bitter" in smoke and "bittergit.com" in smoke else "failed",
     },
     {
         "name": "landing_contract",
-        "result": "ok" if "Agent-native source control." in landing and "BitterGit is Git-compatible source custody for agent runs" in landing and "Bitter fleet is tenant zero" in landing and "accounts are request-only" in landing and 'action="/__submit"' in landing and 'value="bittergit-early-access"' in landing else "failed",
+        "result": "ok" if "Source control without another signup." in landing and "BitterGit gives every app a real Git repository" in landing and "The Apache-2.0 alpha is public today" in landing and "https://github.com/sheetgenius/bittergit" in landing and "https://bitter.sh/" in landing and "bitterdesk.com" not in landing else "failed",
     },
 ]
 failures = [check["name"] for check in checks if check["result"] != "ok"]
@@ -174,7 +174,7 @@ cat >"${ARTIFACT_DIR}/prepare.json" <<JSON
   "runtime_health_path": "/up",
   "limitations": [
     "This prepare path validates the generated Radicchio site, release identity artifact, public landing smoke, and production dependency audit.",
-    "Radicchio form delivery status is not checked because this repo's postdeploy verifier currently verifies public paths and release identity only."
+    "The Bitter.sh destination is checked as a public link; this path does not create an account or workspace."
   ],
   "result": "ok"
 }

@@ -187,9 +187,9 @@ button {
   -webkit-mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.85), transparent 78%);
 }
 
-/* ================== Commit stream panel ==================
-   Fake `bitter git log --run` output. Shows the product's
-   core primitive — commits grouped and stamped by run. */
+/* ================== Source history panel ==================
+   A compact view of checkpoints, imports, restores, and the
+   exact commits held by the source-custody service. */
 
 .commit-stream {
   position: relative;
@@ -538,6 +538,27 @@ button {
 }
 
 /* ================== CTA buttons ================== */
+
+.site-header__github {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 2.75rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted-strong);
+  border: 1px solid color-mix(in srgb, var(--color-line-strong) 80%, transparent);
+}
+
+.site-header__github:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.site-header__github:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
 
 .btn-primary {
   display: inline-flex;

@@ -1,60 +1,66 @@
 # BitterGit
 
-BitterGit is Git-compatible source custody for agent runs, with signed run
-provenance, run-level review, and BitterGrid verification receipts.
+BitterGit is an open-source, self-hosted Git service for AI coding agents. It
+gives every app an ordinary Git repository from the beginning without making a
+GitHub account part of setup.
 
-## What It Is
+## Why It Exists
 
-BitterGit keeps ordinary Git semantics while attaching source-custody context
-around agent work. The run, not the bot account or pull request, becomes the
-review unit.
+Bitter is meant to remove the setup between an idea and a capable coding agent
+getting to work. For someone who does not already use GitHub, creating and
+connecting another account before the first repository exists is an avoidable
+obstacle.
 
-The public product loop is:
+BitterGit makes the repository part of the prepared environment. Source stays
+cloneable and exportable with standard Git tools. GitHub and other providers
+can still be connected later as external sources or mirrors; they are options,
+not prerequisites.
 
-```text
-WakePacket -> AgentRun -> Commit -> RunTrailers -> RunBundle -> GridReceipt -> Accept/RevertDecision -> SourceHistory
-```
+## What Ships Today
 
-## User And Job
+The public Apache-2.0 alpha provides:
 
-BitterGit is built for operators and teams whose agents commit across multiple
-repositories. They need to know which run made what, what verified, what failed,
-and what can be accepted or reverted without clicking through a pile of pull
-requests or trusting a generic bot identity.
+- Git smart HTTP through standard Git plumbing
+- repository-scoped read, write, and ref policy
+- ref events, diff, checkpoints, restore, and export
+- conservative folder, zip, and Git import review
+- optional external mirrors
+- source-linked records tied to exact commits
+- optional account, workcell, agent, secret, and deploy integration contracts
+
+The server is alpha software. Keep the demo path on loopback, use independent
+backups, and read the security model before a network deployment.
 
 ## Place In Bitter
 
-Bitter CLI stamps and signs run provenance around ordinary Git operations.
-BitterGit preserves repositories, source history, commit provenance, and
-source-linked workflow metadata. BitterGrid builds, deploys, verifies, and
-records runtime receipts. BitterLog can preserve the source-custody evidence for
-future wake packets.
+[Bitter](https://bitter.sh/) is a prepared workspace and CLI for agentic coding.
+BitterGit owns the source-custody layer: the repository, scoped agent access,
+recoverable history, and exact commit behind later work.
+
+The wider hosted product is designed to connect that source to account-backed
+setup, prepared workspaces, agent-run provenance, BitterGrid verification,
+deploys, logs, support, and project history. Those services are not bundled in
+the open-source BitterGit server.
 
 ## Boundary
 
 BitterGit is not a GitHub clone, project tracker, social network, CI system,
-deploy executor, account/billing layer, or secret-value store.
-
-The public `bittergit.com` root is a marketing surface, not the Git remote or
-product API endpoint.
+deploy executor, account/billing layer, or secret-value store. The public
+`bittergit.com` root is a marketing surface, not the Git remote or product API
+endpoint.
 
 ## Current Status
 
-Bitter's own fleet is tenant zero. External accounts are request-only. The
-public marketing site is live and Grid-verified at the release reported by
-`https://bittergit.com/up`.
-
-Access requests start in BitterDesk: https://bitterdesk.com/
-
-Public source repository: https://github.com/sheetgenius/bittergit-marketing
+The open-source BitterGit alpha is public and can be run locally today. The
+integrated product can be experienced at https://bitter.sh/.
 
 ## Public Links
 
 - Website: https://bittergit.com/
-- Public source repository: https://github.com/sheetgenius/bittergit-marketing
+- Open-source BitterGit service: https://github.com/sheetgenius/bittergit
+- Quick start: https://github.com/sheetgenius/bittergit#quick-start
+- Website source: https://github.com/sheetgenius/bittergit-marketing
+- Experience BitterGit in Bitter: https://bitter.sh/
 - Health/release identity: https://bittergit.com/up
-- Access requests and support: https://bitterdesk.com/
 - AI index: https://bittergit.com/llms.txt
 - Full AI context: https://bittergit.com/llms-full.txt
-- Bitter: https://bitter.sh/
-- BitterGrid: https://bittergrid.com/

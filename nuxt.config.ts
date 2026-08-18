@@ -26,7 +26,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'BitterGit — Agent-native source control',
+      title: 'BitterGit — Open-source Git for AI coding agents',
       htmlAttrs: {
         lang: 'en',
       },
@@ -36,22 +36,22 @@ export default defineNuxtConfig({
         {
           name: 'description',
           content:
-            'BitterGit is Git-compatible source custody for agent runs, with signed run provenance, run-level review, and BitterGrid verification receipts.',
+            'BitterGit is an open-source, self-hosted Git service for AI coding agents. Start with ordinary Git; connect GitHub later if it helps.',
         },
-        { property: 'og:title', content: 'BitterGit — Agent-native source control' },
+        { property: 'og:title', content: 'BitterGit — Open-source Git for AI coding agents' },
         {
           property: 'og:description',
           content:
-            'Ordinary Git semantics underneath; signed run provenance and verification receipts around agent work.',
+            'Every app can start with ordinary Git. No GitHub account is required, and the Apache-2.0 server is public today.',
         },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://bittergit.com/' },
         { name: 'twitter:card', content: 'summary' },
-        { name: 'twitter:title', content: 'BitterGit — Agent-native source control' },
+        { name: 'twitter:title', content: 'BitterGit — Open-source Git for AI coding agents' },
         {
           name: 'twitter:description',
           content:
-            'Git-compatible source custody for agent runs, with signed provenance and Grid receipts.',
+            'Open-source Git custody for AI coding agents. GitHub is an option, not a prerequisite.',
         },
         { name: 'color-scheme', content: 'light dark' },
         { name: 'theme-color', content: '#f7f7fb', media: '(prefers-color-scheme: light)' },

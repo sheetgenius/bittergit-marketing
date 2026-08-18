@@ -1,33 +1,31 @@
 # BitterGit
 
-> BitterGit is Git-compatible source custody for agent runs, with signed run
-> provenance, run-level review, and BitterGrid verification receipts.
+> BitterGit is an open-source, self-hosted Git service for AI coding agents. An
+> app can start with ordinary Git without requiring a GitHub account first.
 
 ## Public Pages
 
 - [BitterGit website](https://bittergit.com/)
 - [Markdown mirror](https://bittergit.com/index.md)
-
-## Product Context
-
 - [Full BitterGit public context](https://bittergit.com/llms-full.txt)
-- [Bitter](https://bitter.sh/)
-- [BitterGrid](https://bittergrid.com/)
 
-## Live Surface
+## Product
 
-- [BitterGit health and release identity](https://bittergit.com/up)
-- [Access requests and support](https://bitterdesk.com/)
+- [Open-source BitterGit service](https://github.com/sheetgenius/bittergit)
+- [Quick start](https://github.com/sheetgenius/bittergit#quick-start)
+- [Experience BitterGit in Bitter](https://bitter.sh/)
 
-## Repository Context
+## Website Repository
 
-- [Public source repository](https://github.com/sheetgenius/bittergit-marketing)
+- [Website source](https://github.com/sheetgenius/bittergit-marketing)
 - [Changelog](https://github.com/sheetgenius/bittergit-marketing/blob/main/CHANGELOG.md)
 - [Contributing](https://github.com/sheetgenius/bittergit-marketing/blob/main/CONTRIBUTING.md)
 - [Security and public boundary](https://github.com/sheetgenius/bittergit-marketing/blob/main/SECURITY.md)
+- [Health and release identity](https://bittergit.com/up)
 
 ## Boundary
 
-The public `bittergit.com` root is a marketing surface, not the Git remote or
-product API endpoint. The public marketing repository owns website source,
-Markdown mirrors, crawler files, smoke tests, and deployment-boundary docs.
+The open-source service repository owns the Git server and source-custody
+implementation. The website repository owns bittergit.com, Markdown mirrors,
+crawler files, smoke tests, and deployment-boundary documentation. The public
+website is not the Git remote or product API endpoint.

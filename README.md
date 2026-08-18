@@ -28,8 +28,8 @@ external sources or mirrors rather than prerequisites.
 [Bitter](https://bitter.sh/) is a prepared workspace and CLI for agentic coding.
 It gives AI agents a place where repositories, credentials, hosting, tests,
 deploys, logs, customer channels, and work history are connected. The CLI can
-be used locally without an account; hosted workspaces are currently opening by
-invitation.
+be used locally without an account. The integrated product can be experienced
+at [bitter.sh](https://bitter.sh/).
 
 At full integration, the components have these roles:
 
@@ -74,7 +74,8 @@ Current public status:
 - The Apache-2.0 BitterGit alpha is public and can be run locally today.
 - Bitter is proving the hosted integration on its own services first.
 - The Bitter CLI can be installed and used locally without an account.
-- Hosted Bitter accounts are opening by invitation.
+- The integrated Bitter product can be experienced at
+  [bitter.sh](https://bitter.sh/).
 - The public `bittergit.com` root is a marketing surface, not the Git remote or
   product API endpoint.
 
@@ -106,16 +107,13 @@ in the separate
 
 ## Links
 
-- Bitter workspace and CLI: [bitter.sh](https://bitter.sh/)
-- Request hosted Bitter access:
-  [bitter.sh/signup](https://bitter.sh/signup/)
+- Experience BitterGit in Bitter: [bitter.sh](https://bitter.sh/)
 - BitterGit website: [bittergit.com](https://bittergit.com/)
 - Open-source BitterGit service:
   [github.com/sheetgenius/bittergit](https://github.com/sheetgenius/bittergit)
 - This website's source:
   [github.com/sheetgenius/bittergit-marketing](https://github.com/sheetgenius/bittergit-marketing)
 - Health/release identity: [bittergit.com/up](https://bittergit.com/up)
-- Support: [bitterdesk.com](https://bitterdesk.com/)
 - Markdown page mirror: [index.md](https://bittergit.com/index.md)
 - AI crawler entry points:
   [llms.txt](https://bittergit.com/llms.txt),
@@ -161,8 +159,10 @@ Known deployment caveats:
 
 ## Development
 
+Use a Nuxt-supported Node release: Node 22.19+, 24.11+, or 26+.
+
 ```bash
-npm install
+npm ci
 npm run generate
 npm run qa:smoke
 npm run test:headers

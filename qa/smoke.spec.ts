@@ -3,6 +3,9 @@ import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 
 const screenshotDir = join(process.cwd(), 'test-results', 'screenshots')
+const productRepositoryUrl = 'https://github.com/sheetgenius/bittergit'
+const productQuickStartUrl = `${productRepositoryUrl}#quick-start`
+const websiteRepositoryUrl = 'https://github.com/sheetgenius/bittergit-marketing'
 
 test('homepage loads with expected title', async ({ page }) => {
   const response = await page.goto('/')
@@ -10,17 +13,17 @@ test('homepage loads with expected title', async ({ page }) => {
   await expect(page).toHaveTitle(/BitterGit/i)
 })
 
-test('homepage exposes meta description and og tags', async ({ page }) => {
+test('homepage exposes current metadata and product identity', async ({ page }) => {
   await page.goto('/')
 
   const description = page.locator('meta[name="description"]')
-  await expect(description).toHaveAttribute('content', /Git-compatible source custody/i)
+  await expect(description).toHaveAttribute('content', /open-source, self-hosted Git service/i)
 
   const ogTitle = page.locator('meta[property="og:title"]')
   await expect(ogTitle).toHaveAttribute('content', /BitterGit/i)
 
   const ogDescription = page.locator('meta[property="og:description"]')
-  await expect(ogDescription).toHaveAttribute('content', /signed run provenance/i)
+  await expect(ogDescription).toHaveAttribute('content', /No GitHub account is required/i)
 
   const canonical = page.locator('link[rel="canonical"]')
   await expect(canonical).toHaveAttribute('href', 'https://bittergit.com/')
@@ -28,15 +31,33 @@ test('homepage exposes meta description and og tags', async ({ page }) => {
   const markdownAlternate = page.locator('link[rel="alternate"][type="text/markdown"]')
   await expect(markdownAlternate).toHaveAttribute('href', 'https://bittergit.com/index.md')
 
-  const jsonLd = await page.locator('script[type="application/ld+json"]').textContent()
-  expect(jsonLd).toContain('https://github.com/sheetgenius/bittergit-marketing')
+  const jsonLdText = await page.locator('script[type="application/ld+json"]').textContent()
+  expect(jsonLdText).toBeTruthy()
+  const jsonLd = JSON.parse(jsonLdText!)
+  expect(jsonLd.sameAs).toEqual([productRepositoryUrl])
+  expect(jsonLd.license).toBe(`${productRepositoryUrl}/blob/main/LICENSE`)
 })
 
-test('homepage exposes the public source repository', async ({ page }) => {
+test('homepage cross-links the product and website repositories', async ({ page }) => {
   await page.goto('/')
+
+  const headerSource = page.getByRole('link', { name: 'View BitterGit source on GitHub' })
+  await expect(headerSource).toBeVisible()
+  await expect(headerSource).toHaveAttribute('href', productRepositoryUrl)
+  const headerIcon = headerSource.locator('svg')
+  await expect(headerIcon).toBeVisible()
+  await expect(headerIcon).toHaveAttribute('aria-hidden', 'true')
+
+  const quickStartLinks = page.locator(`a[href="${productQuickStartUrl}"]`)
+  await expect(quickStartLinks).toHaveCount(2)
+  await expect(quickStartLinks.first()).toBeVisible()
+
   await expect(
-    page.locator('footer a[href="https://github.com/sheetgenius/bittergit-marketing"]'),
-  ).toBeVisible()
+    page.locator(`footer a[href="${productRepositoryUrl}"]`),
+  ).toContainText('Product source')
+  await expect(
+    page.locator(`footer a[href="${websiteRepositoryUrl}"]`),
+  ).toContainText('Website source')
 })
 
 test('health endpoint reports the deploy receipt shape', async ({ request }) => {
@@ -56,29 +77,27 @@ test('health endpoint reports the deploy receipt shape', async ({ request }) => 
   expect(payload.release).toBe(payload.git_sha)
 })
 
-test('homepage hero heading is visible', async ({ page }) => {
+test('homepage states the current alpha and founder motivation', async ({ page }) => {
   await page.goto('/')
-  const hero = page.locator('h1').first()
-  await expect(hero).toBeVisible()
-  await expect(page.getByText('BitterGit is Git-compatible source custody for agent runs')).toBeVisible()
-  await expect(page.getByText('external accounts are request-only')).toBeVisible()
-  await expect(page.getByRole('link', { name: 'See first run' })).toBeVisible()
+
+  await expect(page.getByRole('heading', { name: 'Source control without another signup.' })).toBeVisible()
+  await expect(page.getByText('BitterGit gives every app a real Git repository')).toBeVisible()
+  await expect(page.getByText('The Apache-2.0 alpha is public today')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'A GitHub account should not be step zero.' })).toBeVisible()
 })
 
-test('homepage CTA path reaches the first-run contract and access path', async ({ page }) => {
+test('homepage separates local source from the Bitter experience', async ({ page }) => {
   await page.goto('/')
 
-  await page.getByRole('link', { name: 'See first run' }).click()
-  await expect(page).toHaveURL(/#try$/)
-  await expect(page.getByText('Expected receipt')).toBeVisible()
+  const experienceLinks = page.getByRole('link', { name: 'Experience it in Bitter', exact: true })
+  await expect(experienceLinks).toHaveCount(2)
+  await expect(experienceLinks.first()).toHaveAttribute('href', 'https://bitter.sh/')
+  await expect(experienceLinks.last()).toHaveAttribute('href', 'https://bitter.sh/')
 
-  await page.getByRole('link', { name: 'Request early access' }).click()
-  await expect(page).toHaveURL(/#access$/)
+  const bitterLink = page.locator('footer a[href="https://bitter.sh/"]')
+  await expect(bitterLink).toContainText('Bitter')
 
-  const supportLink = page.getByRole('link', { name: 'Start request in BitterDesk' })
-  await expect(supportLink).toBeVisible()
-  await expect(supportLink).toHaveAttribute('href', 'https://bitterdesk.com')
-  await expect(page.getByText('There is no self-serve signup queue or static form endpoint')).toBeVisible()
+  await expect(page.locator('a[href="https://bitterdesk.com"]')).toHaveCount(0)
 })
 
 test('theme toggle changes the document theme', async ({ page }) => {
@@ -101,28 +120,39 @@ for (const width of [390, 768, 1440]) {
     await page.goto('/')
 
     await expect(page.locator('h1').first()).toBeInViewport()
-    await expect(page.getByRole('link', { name: 'Request access' }).first()).toBeInViewport()
+    await expect(page.getByRole('link', { name: 'View BitterGit source on GitHub' })).toBeInViewport()
+    await expect(page.locator(`a[href="${productQuickStartUrl}"]`).first()).toBeInViewport()
     await expect(page.getByText('Native git').first()).toBeVisible()
 
     await page.screenshot({
-      path: join(screenshotDir, `bittergit-home-${width}.png`),
+      path: join(screenshotDir, `bittergit-home-${width}-dark.png`),
+      fullPage: false,
+    })
+
+    await page.goto('/?theme=light')
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+    await expect(page.locator('h1').first()).toBeInViewport()
+    await expect(page.getByRole('link', { name: 'View BitterGit source on GitHub' })).toBeInViewport()
+    await page.screenshot({
+      path: join(screenshotDir, `bittergit-home-${width}-light.png`),
       fullPage: false,
     })
   })
 }
 
-test('public discovery files are reachable', async ({ request }) => {
+test('public discovery files distinguish product and website source', async ({ request }) => {
   const expectedText = new Map([
-    ['/robots.txt', 'Sitemap: https://bittergit.com/sitemap.xml'],
-    ['/sitemap.xml', 'https://bittergit.com/index.md'],
-    ['/llms.txt', 'https://github.com/sheetgenius/bittergit-marketing'],
-    ['/llms-full.txt', 'https://github.com/sheetgenius/bittergit-marketing'],
-    ['/index.md', 'https://github.com/sheetgenius/bittergit-marketing'],
+    ['/robots.txt', ['Sitemap: https://bittergit.com/sitemap.xml']],
+    ['/sitemap.xml', ['2026-08-18', 'https://bittergit.com/index.md']],
+    ['/llms.txt', [productRepositoryUrl, websiteRepositoryUrl]],
+    ['/llms-full.txt', [productRepositoryUrl, websiteRepositoryUrl]],
+    ['/index.md', [productRepositoryUrl, websiteRepositoryUrl]],
   ])
 
-  for (const [route, text] of expectedText.entries()) {
+  for (const [route, values] of expectedText.entries()) {
     const response = await request.get(route)
     expect(response.ok(), `${route} should be public`).toBe(true)
-    expect(await response.text()).toContain(text)
+    const body = await response.text()
+    for (const value of values) expect(body).toContain(value)
   }
 })
