@@ -121,11 +121,11 @@ checks = [
     },
     {
         "name": "postdeploy_contract",
-        "result": "ok" if "EXPECTED_GIT_SHA" in postdeploy and "/up" in postdeploy and "SMOKE_PATHS" in postdeploy and "X-Frame-Options" in postdeploy and "SAMEORIGIN" in postdeploy and "secret_material_returned" in postdeploy else "failed",
+        "result": "ok" if "EXPECTED_GIT_SHA" in postdeploy and "/up" in postdeploy and "SMOKE_PATHS" in postdeploy and "EXPECTED_CONTENT_SECURITY_POLICY" in postdeploy and "X-Frame-Options" in postdeploy and "DENY" in postdeploy and "secret_material_returned" in postdeploy else "failed",
     },
     {
         "name": "static_security_headers",
-        "result": "ok" if "Strict-Transport-Security: max-age=31536000; includeSubDomains" in static_headers and "X-Frame-Options: SAMEORIGIN" in static_headers and "X-Content-Type-Options: nosniff" in static_headers and "Referrer-Policy: strict-origin-when-cross-origin" in static_headers and "Permissions-Policy: camera=(), microphone=(), geolocation=()" in static_headers else "failed",
+        "result": "ok" if "Strict-Transport-Security: max-age=31536000; includeSubDomains" in static_headers and "Content-Security-Policy: default-src 'self'" in static_headers and "X-Frame-Options: DENY" in static_headers and "X-Content-Type-Options: nosniff" in static_headers and "Referrer-Policy: strict-origin-when-cross-origin" in static_headers and "Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=(), browsing-topics=()" in static_headers else "failed",
     },
     {
         "name": "public_smoke_scope",
