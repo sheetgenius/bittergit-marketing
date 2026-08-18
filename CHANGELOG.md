@@ -23,8 +23,18 @@ Preferred categories:
 
 Use this section for changes committed after the latest dated entry.
 
+### Product Context
+
+- Made the original product motivation explicit: a GitHub account should not be
+  required before someone can start agentic coding in Bitter.
+- Replaced current-tense hosted provenance claims with the capabilities in the
+  public Apache-2.0 alpha, while retaining the wider run-provenance model as
+  hosted product direction.
+
 ### Deployment
 
+- Updated the static-site build chain to patched Nuxt, Vue, and Vue Router
+  releases and refreshed vulnerable transitive dependencies.
 - Made the Radicchio deploy helper fail when Radicchio returns a deploy error,
   preventing Grid/Radicchio false-positive deploy receipts from being treated as
   live verification.
@@ -36,13 +46,13 @@ Use this section for changes committed after the latest dated entry.
 
 ### Website
 
+- Added accessible GitHub-mark links to the open-source BitterGit service in
+  the persistent header, hero, Bitter section, and footer.
+- Split the open-source product repository from the marketing website source,
+  and replaced the BitterDesk handoff with a direct Bitter.sh experience path.
 - Removed leftover green page-background glows from the BitterGit palette and
   aligned them with the indigo source-custody accent.
 - Aligned the Nuxt loading indicator with the same indigo accent.
-- Replaced the dead static early-access form with a truthful BitterDesk request
-  path and propagated the access boundary through Markdown and AI files.
-- Updated live workcell verification to assert the BitterDesk access path
-  instead of the removed static form.
 
 ### Public Hygiene
 
@@ -51,8 +61,11 @@ Use this section for changes committed after the latest dated entry.
 
 ### Repository Metadata
 
-- Added public source links to the site footer, README, Markdown mirror,
-  `llms.txt`, `llms-full.txt`, and JSON-LD metadata.
+- Made the open-source BitterGit service the application identity in JSON-LD
+  and propagated distinct product-source and website-source links through the
+  Markdown and AI-readable mirrors.
+- Added website-source links to the site footer, README, Markdown mirror,
+  `llms.txt`, and `llms-full.txt`.
 
 ## 2026-06-04
 

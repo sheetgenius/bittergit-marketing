@@ -18,19 +18,38 @@ The shared public marketing repository standard lives in Factory at
 
 ## Product Boundary
 
-Use this model when changing copy:
+The public Apache-2.0 BitterGit server is available at
+`https://github.com/sheetgenius/bittergit`. It ships ordinary Git smart HTTP,
+scoped source access, history, checkpoints, restore/export, import review,
+mirrors, source-linked receipts, and optional integration contracts.
+
+Starting an app in Bitter must not require creating or connecting a GitHub
+account first. GitHub and other providers are optional external sources or
+mirrors, not prerequisites.
+
+The wider hosted product direction is:
 
 ```text
 WakePacket -> AgentRun -> Commit -> RunTrailers -> RunBundle -> GridReceipt -> Accept/RevertDecision -> SourceHistory
 ```
 
-BitterGit is Git-compatible source custody for agent runs. It is not a GitHub
-clone, project tracker, social network, CI system, deploy executor,
-account/billing layer, or secret-value store.
+Do not present that hosted provenance model or conceptual `bitter git` commands
+as features bundled in the open-source server. Clearly label them as hosted
+direction when they are useful context.
+
+BitterGit is not a GitHub clone, project tracker, social network, CI system,
+deploy executor, account/billing layer, or secret-value store.
 
 Do not imply that `https://bittergit.com/` is the Git remote/API endpoint. The
-public root is the marketing surface. Current CTA truth is request access only;
-Bitter's own fleet is tenant zero.
+public root is the marketing surface. Current CTA truth is split: the
+open-source alpha is public and runnable locally; the integrated product is
+experienced through `https://bitter.sh/`. Do not route the active marketing
+journey through BitterDesk.
+
+Use unambiguous link labels:
+
+- `Product source` means `https://github.com/sheetgenius/bittergit`.
+- `Website source` means `https://github.com/sheetgenius/bittergit-marketing`.
 
 ## Deployment Boundary
 

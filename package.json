@@ -3,6 +3,9 @@
   "type": "module",
   "private": true,
   "description": "Marketing site for bittergit.com",
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0 || >=26.0.0"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -15,9 +18,9 @@
     "test:headers": "node --test Scripts/static-headers.test.mjs"
   },
   "dependencies": {
-    "nuxt": "4.4.6",
-    "vue": "3.5.34",
-    "vue-router": "5.0.7"
+    "nuxt": "4.5.2",
+    "vue": "3.5.41",
+    "vue-router": "5.2.0"
   },
   "devDependencies": {
     "@playwright/test": "1.59.1",
@@ -25,8 +28,8 @@
     "tailwindcss": "4.2.2"
   },
   "overrides": {
-    "brace-expansion": "5.0.6",
-    "devalue": "5.8.1",
-    "ws": "8.20.1"
+    "brace-expansion": "5.0.9",
+    "devalue": "5.9.0",
+    "ws": "8.21.3"
   }
 }
