@@ -9,7 +9,8 @@ test -n "${VERIFY_BASE_URL:-}" || {
 TIMEOUT_SECONDS="${VERIFY_TIMEOUT_SECONDS:-900}"
 POLL_SECONDS="${VERIFY_POLL_SECONDS:-5}"
 SMOKE_PATHS="${VERIFY_SMOKE_PATHS:-/,/robots.txt,/sitemap.xml,/llms.txt,/llms-full.txt,/index.md}"
-EXPECTED_PERMISSIONS_POLICY="camera=(), microphone=(), geolocation=()"
+EXPECTED_CONTENT_SECURITY_POLICY="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https:; connect-src 'self' https:; upgrade-insecure-requests"
+EXPECTED_PERMISSIONS_POLICY="camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=(), browsing-topics=()"
 
 header_value() {
   local name="$1"
@@ -136,8 +137,9 @@ validate_health_body
 
 for path in "/" "/up"; do
   assert_header "$path" "Strict-Transport-Security" "max-age=31536000; includeSubDomains"
+  assert_header "$path" "Content-Security-Policy" "$EXPECTED_CONTENT_SECURITY_POLICY"
   assert_header "$path" "X-Content-Type-Options" "nosniff"
-  assert_header "$path" "X-Frame-Options" "SAMEORIGIN"
+  assert_header "$path" "X-Frame-Options" "DENY"
   assert_header "$path" "Referrer-Policy" "strict-origin-when-cross-origin"
   assert_header "$path" "Permissions-Policy" "$EXPECTED_PERMISSIONS_POLICY"
 done

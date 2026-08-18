@@ -152,8 +152,8 @@ Known deployment caveats:
 - The manual `Scripts/deploy` path requires `RADICCHIO_API_TOKEN` and is not the
   observed current source-event deploy trigger.
 - Radicchio serves the current edge security header baseline directly:
-  `X-Frame-Options: SAMEORIGIN` and
-  `Permissions-Policy: camera=(), microphone=(), geolocation=()`.
+  a self-only content security policy, `X-Frame-Options: DENY`, and a
+  restrictive browser permissions policy.
 - Radicchio currently serves `/index.md` as `application/octet-stream` and does
   not emit canonical HTTP `Link` headers for Markdown alternates.
 

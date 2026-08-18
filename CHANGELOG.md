@@ -33,6 +33,9 @@ Use this section for changes committed after the latest dated entry.
 
 ### Deployment
 
+- Aligned static and postdeploy checks with the strengthened Radicchio edge
+  baseline: self-only content security, denied framing, and expanded browser
+  permission restrictions.
 - Updated the static-site build chain to patched Nuxt, Vue, and Vue Router
   releases and refreshed vulnerable transitive dependencies.
 - Made the Radicchio deploy helper fail when Radicchio returns a deploy error,
